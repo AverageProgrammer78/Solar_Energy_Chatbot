@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SolarBot - Your Solar Energy Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #FDB813 0%, #FF6B35 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+            max-height: 700px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+            padding: 25px;
+            text-align: center;
+            color: #2C3E50;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #FFF8E7;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.5;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            border: 2px solid #FFD93D;
+            color: #2C3E50;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+            color: white;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .bot .avatar {
+            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+        }
+
+        .user .avatar {
+            background: linear-gradient(135deg, #FF8C00 0%, #FF6B35 100%);
+        }
+
+        .input-container {
+            padding: 20px;
+            background: white;
+            border-top: 2px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #userInput:focus {
+            border-color: #FFA500;
+        }
+
+        #sendBtn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+            color: #2C3E50;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #sendBtn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 165, 0, 0.4);
+        }
+
+        #sendBtn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        #sendBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .suggestions {
+            padding: 10px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .suggestion-btn {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .suggestion-btn:hover {
+            background: #FFA500;
+            color: white;
+            border-color: #FFA500;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 18px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: #FFA500;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>☀️ SolarBot</h1>
+            <p>Your solar energy assistant</p>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message bot">
+                <div class="avatar">☀️</div>
+                <div class="message-content">
+                    Hello! I'm SolarBot, your solar energy assistant! I'm here to help you learn about solar panels, their benefits, costs, and why they're a great investment for your home or business. What would you like to know?
+                </div>
+            </div>
+        </div>
+
+        <div class="suggestions">
+            <button class="suggestion-btn" onclick="sendSuggestion('Why should I get solar panels?')">Why get solar?</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('How much do solar panels cost?')">Cost info</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('How do solar panels work?')">How they work</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('What are the environmental benefits?')">Environmental benefits</button>
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="userInput" placeholder="Ask me about solar power..." onkeypress="handleKeyPress(event)">
+            <button id="sendBtn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function getResponse(userMessage) {
+            const msg = userMessage.toLowerCase();
+            
+            // Greetings
+            if (/(^|\s)(hi|hello|hey|greetings|good morning|good afternoon|good evening)($|\s|!)/i.test(msg)) {
+                const greetings = [
+                    "Hello! Great to meet you! I'm SolarBot, and I'm passionate about helping people understand solar energy. Solar panels are one of the best investments you can make - they save money, increase property value, and help our planet. What would you like to know about solar?",
+                    "Hey there! Thanks for chatting with me! I specialize in solar energy and I'd love to help you understand why solar panels are such a smart choice. They offer incredible financial savings and environmental benefits. What interests you most about solar power?",
+                    "Hi! Welcome! I'm excited to share information about solar energy with you. Going solar is easier and more affordable than ever, with amazing long-term benefits. What questions do you have about solar panels?"
+                ];
+                return greetings[Math.floor(Math.random() * greetings.length)];
+            }
+            
+            // Benefits and "why" questions
+            if (/why|benefit|advantage|should i|worth it|good idea|pros/i.test(msg)) {
+                const benefits = [
+                    "Solar panels offer incredible benefits! Financially, most homeowners save $20,000-$75,000 over 25 years, with systems paying for themselves in 6-10 years. Your home value increases by 3-4%, and you'll enjoy energy independence. Environmentally, you're directly fighting climate change - a typical system offsets 3-4 tons of CO2 annually, equivalent to planting 100 trees each year! Plus, with current 30% federal tax credits, there's never been a better time to go solar.",
+                    "Great question! The advantages of solar are substantial. You'll dramatically reduce or eliminate your electricity bills, protect yourself from rising energy costs, and increase your property value. Most systems pay for themselves in 6-10 years through savings. Beyond finances, you're making a real environmental impact - preventing tons of carbon emissions and helping create a sustainable future. With incentives and financing options available, going solar is more accessible than ever!",
+                    "There are so many reasons to go solar! You'll save thousands on electricity over the system's 25+ year lifespan, lock in low energy costs while rates keep rising, and boost your home's resale value. You gain energy independence and security. Environmentally, you're part of the solution to climate change. Plus, solar technology is proven, reliable, and requires minimal maintenance. With tax credits covering 30% of costs, it's a smart financial and environmental decision!"
+                ];
+                return benefits[Math.floor(Math.random() * benefits.length)];
+            }
+            
+            // Cost questions
+            if (/cost|price|expensive|afford|pay|money|dollar|investment|cheap/i.test(msg)) {
+                const costs = [
+                    "Great question about costs! A typical residential solar system runs $15,000-$25,000 before incentives. But here's the exciting part: the federal tax credit immediately reduces that by 30%, and many states offer additional rebates! Most homeowners pay an effective cost of $10,500-$17,500. You can finance with $0 down, and monthly payments are often less than your current electric bill. Over 25 years, you'll save $30,000-$75,000 depending on location. The system pays for itself in 6-10 years, then it's pure savings!",
+                    "Solar costs have dropped dramatically! The average 6kW system costs around $18,000 before incentives. With the 30% federal tax credit, that drops to about $12,600. Many states offer additional rebates that can reduce costs further. Financing options make solar accessible - you can start with $0 down and have monthly payments lower than your electric bill. You're essentially trading your utility payment for a solar payment that leads to ownership. After 6-10 years, it's paid off and you have free electricity for 15-20+ more years!",
+                    "Investing in solar is more affordable than ever! While a complete system costs $15,000-$25,000 upfront, the 30% federal tax credit plus state incentives can cut that in half. Most people finance their system, paying less monthly than their old electric bill. The system typically pays for itself through savings in 6-10 years. After that, you're generating free power! Over the system's 25-30 year life, you'll save $40,000-$100,000 depending on your electricity rates. It's one of the best investments you can make!"
+                ];
+                return costs[Math.floor(Math.random() * costs.length)];
+            }
+            
+            // How it works
+            if (/(how.*work|technology|science|function|panel.*work)/i.test(msg)) {
+                const howItWorks = [
+                    "Solar panels work through fascinating technology! They contain photovoltaic cells made of silicon that absorb sunlight. When photons from the sun hit these cells, they knock electrons loose, creating an electrical current (DC power). An inverter then converts this to AC power that your home uses. On sunny days, you generate more than you need, and that excess power flows back to the grid, earning you credits with your utility! Even on cloudy days, you're generating power - modern panels are 15-20% efficient in diffuse light.",
+                    "The science is really cool! Solar panels use the photovoltaic effect - when light hits semiconductor materials (usually silicon), it frees electrons and creates electric current. Each panel has many cells working together to produce DC electricity. Your inverter converts this to standard AC power for your home. Any excess production gets sent to the grid, and you get credited for it through net metering. The system works automatically - panels generate power whenever there's light, and your inverter manages everything seamlessly!",
+                    "Solar technology is elegantly simple! Photovoltaic cells in your panels absorb photons from sunlight. This energy excites electrons in the silicon, causing them to flow and create DC electricity. The inverter converts this to AC power compatible with your home's electrical system. During peak sun hours, you'll generate more than you use - this excess goes to the grid and you earn credits. At night or on cloudy days, you draw from the grid using your banked credits. It's completely automated and requires no interaction from you!"
+                ];
+                return howItWorks[Math.floor(Math.random() * howItWorks.length)];
+            }
+            
+            // Environmental questions
+            if (/environment|climate|carbon|green|clean|planet|earth|eco|sustainable|pollution/i.test(msg)) {
+                const environmental = [
+                    "The environmental impact of solar is phenomenal! Every year, a typical residential system prevents 3-4 tons of carbon dioxide emissions - that's equivalent to planting 100 trees annually or taking a car off the road. Over 25 years, your system could offset over 100 tons of CO2! Solar produces zero air pollution, uses no water (unlike coal or natural gas plants), and helps combat climate change directly. You're also reducing demand for fossil fuels, which means less mining, drilling, and environmental destruction. Going solar means you're actively creating a cleaner, healthier planet!",
+                    "Solar power is one of the best things you can do for the environment! A single home solar system offsets the equivalent of driving 100,000 miles in a gas car over its lifetime. It prevents tons of harmful emissions - CO2, sulfur dioxide, nitrogen oxides - that contribute to smog, acid rain, and climate change. Unlike fossil fuel plants, solar uses no water and creates no toxic waste. You're directly reducing the need for coal and natural gas, helping transition our energy grid to clean, renewable sources. It's personal climate action that really makes a difference!",
+                    "The environmental benefits are incredible and immediate! From day one, your solar system starts preventing carbon emissions. Over its lifetime, it'll offset 100+ tons of CO2 - like planting thousands of trees. You're eliminating air and water pollution from your electricity consumption. Solar panels require no fuel, produce no emissions, and use no water during operation. You're helping reduce our dependence on fossil fuels and supporting the growth of renewable energy infrastructure. Every kilowatt-hour you generate is one less from coal or gas. It's powerful environmental action!"
+                ];
+                return environmental[Math.floor(Math.random() * environmental.length)];
+            }
+            
+            // Savings specific
+            if (/sav(e|ing)|bill|electricity cost|reduce.*bill|electric.*bill/i.test(msg)) {
+                const savings = [
+                    "The savings from solar are substantial and long-lasting! Most homeowners save $1,500-$3,000 annually on electricity bills, depending on their location and energy usage. In high-cost states like California, Hawaii, or Massachusetts, annual savings can exceed $4,000! Over the typical 25-year lifespan, that's $37,500-$100,000 in total savings. Even better, you're protected from rising electricity rates - while your neighbors' bills increase 3-5% yearly, your energy cost stays locked in. Net metering in most states means you can bank excess summer production for winter use!",
+                    "Solar delivers impressive financial returns! Average savings range from $10,000-$30,000 over 20 years, but in expensive electricity markets, savings can hit $60,000-$100,000! You're essentially pre-paying for decades of electricity at today's rates, protecting yourself from future rate hikes. Most systems generate a 10-20% annual return on investment. In many areas, solar panels can reduce your monthly electricity costs by 50-90%. That's real money staying in your pocket every month, year after year!",
+                    "You'll see real savings from day one! The typical household saves $100-$250 per month on electricity, which adds up to thousands annually. Over the system's life, you're looking at $40,000-$80,000 in savings for most homeowners. In sunny states with high electricity costs, savings can exceed $100,000! Plus, you're insulated from utility rate increases that typically rise 3-5% per year. Your solar payment (if financed) stays the same, and once paid off, your electricity is essentially free for another 10-15 years!"
+                ];
+                return savings[Math.floor(Math.random() * savings.length)];
+            }
+            
+            // Installation
+            if (/install|setup|process|long.*take|how.*installed|timeline/i.test(msg)) {
+                const installation = [
+                    "The installation process is surprisingly smooth and quick! After choosing your installer, they'll design a custom system for your roof, which usually takes about a week. Then comes permitting, which takes 2-6 weeks depending on your local government. The actual installation is amazingly fast - just 1-3 days! Professional installers mount the panels, connect the inverter and electrical systems, and test everything. After installation, there's a final inspection and utility approval, which takes another 2-4 weeks. From contract signing to generating power, most homeowners are up and running within 2-3 months!",
+                    "Installing solar is easier than most people think! The process starts with a site assessment and custom design (1 week). Your installer handles all permit applications - this bureaucratic step takes 2-6 weeks but requires nothing from you. When permits arrive, installation happens fast - typically 1-3 days for a residential system. Crews work efficiently, mounting panels, wiring systems, and installing your inverter. After a quick inspection and utility interconnection approval (2-4 weeks), you flip the switch! The whole journey is usually 2-3 months, and your installer manages everything.",
+                    "From decision to solar power, here's the timeline: First, free consultations and system design (1 week). Then permitting - your installer submits all paperwork to local authorities (2-6 weeks). Installation day arrives and takes just 1-3 days - teams mount panels, install inverters, connect everything, and test the system. You'll barely notice them! Finally, inspection and grid connection approval (2-4 weeks). Most systems are generating power within 60-90 days of signing. Your installer coordinates everything, so it's hassle-free for you!"
+                ];
+                return installation[Math.floor(Math.random() * installation.length)];
+            }
+            
+            // Maintenance
+            if (/maintain|maintenance|care|clean|upkeep|last|durable|lifespan/i.test(msg)) {
+                const maintenance = [
+                    "Solar panels are incredibly low-maintenance! They have no moving parts, so there's very little that can break or wear out. Rain naturally keeps them clean in most areas, but if you're in a dusty location, an occasional rinse with a garden hose is all you need. Most manufacturers recommend a professional inspection every 3-5 years, but it's not always necessary. Solar panels are warrantied for 25 years and typically last 30-35 years while maintaining 80-85% efficiency. The inverter may need replacement after 10-15 years (cost: $1,000-$2,000), but that's your only significant maintenance expense. It's truly set-it-and-forget-it!",
+                    "Maintenance is minimal - that's one of solar's best features! Panels are built to withstand decades of weather with virtually no attention. They're self-cleaning in most climates thanks to rain. If needed, spray them with water once or twice a year. No chemicals, no scrubbing required. The panels themselves have no moving parts and are extremely durable. Most come with 25-year performance warranties and 10-12 year equipment warranties. They'll keep producing power for 30+ years with efficiency only gradually declining. Besides a possible inverter replacement midway through, maintenance costs are near zero!",
+                    "One of solar's biggest advantages is how little maintenance it needs! Panels are designed to sit on your roof for decades with minimal intervention. They're weatherproof, durable, and self-sufficient. Occasional rain keeps them clean - dust and debris wash right off. If you live in a very dusty area, hosing them down 1-2 times a year maintains peak performance. No chemicals, no special equipment needed. The panels have 25-30 year lifespans, and inverters last 10-15 years. Total maintenance costs over the system's life are usually under $2,000. It's hands-off solar power!"
+                ];
+                return maintenance[Math.floor(Math.random() * maintenance.length)];
+            }
+
+            // Weather/cloudy concerns
+            if (/cloud|rain|weather|winter|shade|snow|night/i.test(msg)) {
+                const weather = [
+                    "Solar panels work great in various weather conditions! While they're most efficient in direct sunlight, they still generate power on cloudy days - typically 10-25% of peak output. Modern panels are designed to capture diffuse light effectively. Rain actually helps by cleaning your panels naturally! In winter, panels can be more efficient because they work better in cold temperatures (though shorter days mean less total production). Snow usually slides right off tilted panels, or melts quickly since panels generate heat. Even in cloudy cities like Seattle, solar makes great financial sense!",
+                    "Don't let clouds worry you! Solar panels generate electricity whenever there's daylight, not just direct sun. On overcast days, you'll still produce 10-25% of your peak capacity - that's more than enough to offset your usage. Annual production is what matters, and sunny days more than compensate for cloudy ones. Rain is actually beneficial, keeping panels clean. Snow typically melts quickly or slides off due to the panel angle and heat. At night, you simply draw from the grid using credits earned during the day. The system is designed to work year-round in all weather!",
+                    "Weather variations are already factored into solar calculations! Yes, panels produce less on cloudy days (10-25% of peak), but they still generate power. The key is annual production - sunny summer days produce excess power that makes up for winter's shorter days. Rain keeps panels clean and doesn't hurt production. Snow rarely sticks to tilted panels and melts quickly. Even in less sunny regions, solar provides excellent returns. Your installer designs systems based on your local weather patterns, ensuring you get the predicted savings regardless of clouds or rain!"
+                ];
+                return weather[Math.floor(Math.random() * weather.length)];
+            }
+
+            // Roof concerns
+            if (/roof|house|home|property|structure|mount/i.test(msg)) {
+                const roof = [
+                    "Most homes are perfect for solar! During the free assessment, installers evaluate your roof's age, condition, orientation, and shading. South, west, and southwest-facing roofs are ideal, but east-facing works too. Your roof should have 15+ years of remaining life - if it needs replacement soon, it's smart to do that first so you don't have to remove panels later. Solar panels actually protect and extend roof life by shielding shingles from weather! If your roof isn't suitable, ground-mounted systems or community solar are great alternatives. Modern installation works with virtually any roof type!",
+                    "Your roof is probably great for solar! Installers check orientation (south is best, but west and east work), condition, and shading during the site assessment. As long as your roof has 15+ years of life left, you're good to go. If replacement is needed soon, doing it before installation makes sense. The great news? Solar panels actually protect your roof from weather damage and can extend its lifespan! Panels work on asphalt shingles, tile, metal - almost any material. If roof mounting isn't ideal, ground systems are an option. Free assessments tell you exactly what will work for your home!",
+                    "Solar works on most roofs! What matters is orientation (south/west/east facing), condition (15+ years remaining life), and minimal shading. During the free consultation, professionals evaluate your specific situation. If your roof needs work soon, replacing it before installation saves hassle later. Here's a bonus: panels actually extend roof life by protecting it from sun, rain, and hail! Modern mounting systems work with all common roofing materials. If your roof truly isn't suitable due to shade or orientation, ground-mount systems or community solar programs are excellent alternatives!"
+                ];
+                return roof[Math.floor(Math.random() * roof.length)];
+            }
+
+            // Thank you responses
+            if (/thank|thanks|appreciate/i.test(msg)) {
+                const thanks = [
+                    "You're very welcome! I'm always thrilled to help people discover the benefits of solar energy. Going solar is one of the best decisions you can make for your finances and the environment. Do you have any other questions about solar panels?",
+                    "Happy to help! I love talking about solar energy - it's such a smart investment. If you have more questions about costs, installation, or anything else solar-related, just ask!",
+                    "My pleasure! Solar energy is my passion, and I'm glad I could help you understand it better. Feel free to ask anything else about solar panels or renewable energy!"
+                ];
+                return thanks[Math.floor(Math.random() * thanks.length)];
+            }
+
+            // Goodbye
+            if (/bye|goodbye|see you|gotta go|later/i.test(msg)) {
+                const goodbyes = [
+                    "Thanks for chatting with me about solar energy! I hope I've helped you understand why solar is such a smart investment. If you have more questions in the future, I'm always here. Have a sunny day! ☀️",
+                    "It was great talking with you! I hope you'll consider going solar - it's truly a win-win for your wallet and the planet. Come back anytime you have questions. Take care! ☀️",
+                    "Goodbye! Thanks for learning about solar with me. Remember, going solar is easier and more affordable than ever. Feel free to return with any questions. Stay bright! ☀️"
+                ];
+                return goodbyes[Math.floor(Math.random() * goodbyes.length)];
+            }
+
+            // Default response - gentle redirect
+            const redirects = [
+                "That's an interesting topic! While I enjoy chatting about various subjects, my real expertise is in solar energy. I'd love to help you understand how solar panels could benefit you! Are you considering solar for your home, or just curious about the technology? I can explain costs, savings, installation, or any other aspect!",
+                "I appreciate the question! Though my specialty is solar energy, I'm happy to chat briefly. Speaking of which, have you thought about whether solar panels might be right for your situation? I can help you understand the financial benefits, environmental impact, and the simple installation process!",
+                "Interesting! While I'm most knowledgeable about solar energy and renewable power, I don't mind a bit of casual conversation. Since you're here though, can I share why solar panels are such a great investment? They've dropped dramatically in price, offer amazing returns, and help fight climate change. What would you like to know?",
+                "That's a good question! I'm primarily focused on helping people understand solar energy, but I'm always happy to have a friendly chat. Is there anything about solar panels you're curious about? I can explain how they work, what they cost, how much you'd save, or anything else solar-related!",
+                "Thanks for asking! While that's a bit outside my solar expertise, I'm here to help with a friendly conversation. Since we're chatting, have you ever considered solar panels? They're more affordable than most people think, and the savings can be substantial. Want to learn more about them?"
+            ];
+
+            return redirects[Math.floor(Math.random() * redirects.length)];
+        }
+
+        function addMessage(content, isUser) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            avatar.textContent = isUser ? '👤' : '☀️';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.textContent = content;
+            
+            if (isUser) {
+                messageDiv.appendChild(messageContent);
+                messageDiv.appendChild(avatar);
+            } else {
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(messageContent);
+            }
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const chatContainer = document.getElementById('chatContainer');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator active';
+            typingDiv.id = 'typingIndicator';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            avatar.textContent = '☀️';
+            
+            const dotsDiv = document.createElement('div');
+            dotsDiv.className = 'typing-dots';
+            dotsDiv.innerHTML = '<span></span><span></span><span></span>';
+            
+            typingDiv.appendChild(avatar);
+            typingDiv.appendChild(dotsDiv);
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const message = input.value.trim();
+            
+            if (message === '') return;
+            
+            addMessage(message, true);
+            input.value = '';
+            sendBtn.disabled = true;
+            input.disabled = true;
+            
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                const response = getResponse(message);
+                hideTypingIndicator();
+                addMessage(response, false);
+                
+                sendBtn.disabled = false;
+                input.disabled = false;
+                input.focus();
+            }, 800);
+        }
+
+        function sendSuggestion(text) {
+            document.getElementById('userInput').value = text;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>
