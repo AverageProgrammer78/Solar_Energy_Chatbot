@@ -1,4 +1,41 @@
-<!DOCTYPE html>
+<!-- Calculator Modal -->
+    <div class="modal" id="calculatorModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeCalculator()">×</button>
+            <h2>Solar Savings Calculator</h2>
+            <p>Estimate your potential savings with solar panels</p>
+            
+            <div class="form-group">
+                <label>Monthly Electric Bill ($)</label>
+                <input type="number" id="monthlyBill" min="0" value="150" oninput="calculateSavings()">
+            </div>
+            <div class="form-group">
+                <label>Average Daily Sun Hours</label>
+                <input type="number" id="sunHours" min="1" max="12" value="5" step="0.5" oninput="calculateSavings()">
+            </div>
+            <div class="form-group">
+                <label>Roof Space Available (sq ft)</label>
+                <input type="number" id="roofSpace" min="0" value="400" oninput="calculateSavings()">
+            </div>
+            <div class="form-group">
+                <label>State</label>
+                <select id="stateSelect" onchange="calculateSavings()">
+                    <option value="CA">California</option>
+                    <option value="TX">Texas</option>
+                    <option value="FL">Florida</option>
+                    <option value="NY">New York</option>
+                    <option value="AZ">Arizona</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div id="calculatorResults"></div>
+            
+            <button class="submit-btn" style="margin-top: 20px;" onclick="saveCalculation()">
+                Save & Continue to Contact Form
+            </button>
+        </div>
+    </div><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -99,11 +136,37 @@
             animation: slideDown 0.5s ease 0.1s backwards;
         }
 
+        .header-buttons {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
         .theme-toggle {
             position: absolute;
             top: 25px;
             right: 25px;
-            background: #808080;
+            background: rgba(255, 255, 255, 0.3);
             border: none;
             width: 40px;
             height: 40px;
@@ -115,40 +178,21 @@
             justify-content: center;
             transition: all 0.3s ease;
             animation: fadeIn 0.5s ease 0.2s backwards;
+            color: #2C3E50;
         }
 
         .theme-toggle:hover {
-            background: #696969;
+            background: rgba(255, 255, 255, 0.5);
             transform: rotate(180deg) scale(1.1);
         }
 
         body.dark-theme .theme-toggle {
-            background: #FFD700;
+            background: rgba(255, 215, 0, 0.3);
+            color: #FFD700;
         }
 
         body.dark-theme .theme-toggle:hover {
-            background: #FFA500;
-        }
-
-        .contact-toggle {
-            position: absolute;
-            top: 25px;
-            left: 25px;
-            background: rgba(255, 255, 255, 0.3);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            animation: fadeIn 0.5s ease 0.2s backwards;
-            color: var(--text-primary);
-        }
-
-        .contact-toggle:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
+            background: rgba(255, 165, 0, 0.4);
         }
 
         .chat-container {
@@ -232,6 +276,59 @@
             color: white;
         }
 
+        .calculator-widget {
+            background: var(--container-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 10px;
+            max-width: 400px;
+        }
+
+        .calculator-widget h4 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+
+        .calc-input-group {
+            margin-bottom: 15px;
+        }
+
+        .calc-input-group label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .calc-input-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        .calc-result {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .calc-result h3 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .calc-result p {
+            font-size: 13px;
+            opacity: 0.95;
+        }
+
         .avatar {
             width: 36px;
             height: 36px;
@@ -262,6 +359,7 @@
             border-top: 2px solid var(--border-color);
             display: flex;
             gap: 10px;
+            align-items: center;
             transition: background 0.3s ease;
         }
 
@@ -281,6 +379,32 @@
             border-color: #FFA500;
             box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.1);
             transform: translateY(-1px);
+        }
+
+        .voice-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--suggestion-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .voice-btn:hover {
+            background: #FFA500;
+            color: white;
+            border-color: #FFA500;
+        }
+
+        .voice-btn.listening {
+            background: #f44336;
+            color: white;
+            animation: pulse 1s infinite;
         }
 
         #sendBtn {
@@ -384,7 +508,6 @@
             30% { transform: translateY(-10px); }
         }
 
-        /* Contact Form Modal */
         .modal {
             display: none;
             position: fixed;
@@ -410,6 +533,8 @@
             border-radius: 20px;
             max-width: 500px;
             width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             animation: slideUp 0.4s ease;
             position: relative;
@@ -474,7 +599,8 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 12px 16px;
             border: 2px solid var(--border-color);
@@ -487,7 +613,8 @@
         }
 
         .form-group input:focus,
-        .form-group textarea:focus {
+        .form-group textarea:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #FFA500;
             box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.1);
@@ -511,13 +638,18 @@
             transition: all 0.3s ease;
         }
 
-        .submit-btn:hover {
+        .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(255, 165, 0, 0.4);
         }
 
         .submit-btn:active {
             transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .success-message {
@@ -530,7 +662,20 @@
             animation: slideDown 0.4s ease;
         }
 
-        /* Scroll to bottom button */
+        .success-message h3 {
+            margin-bottom: 8px;
+        }
+
+        .error-message {
+            background: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: slideDown 0.4s ease;
+        }
+
         .scroll-bottom {
             position: absolute;
             bottom: 20px;
@@ -563,15 +708,57 @@
         .chat-wrapper {
             position: relative;
         }
+
+        .loading-spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid #FFA500;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .quick-action-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+            color: #2C3E50;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <button class="contact-toggle" onclick="openContactForm()">📧 Contact Us</button>
+            <div class="header-buttons">
+                <button class="header-btn" onclick="openContactForm()">📧 Contact Us</button>
+            </div>
             <h1>☀️ SolarBot</h1>
-            <p>Your solar energy assistant</p>
-            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" style="color: #000000;">🌙</button>
+            <p>Your AI-powered solar energy assistant</p>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
         </div>
 
         <div class="chat-wrapper">
@@ -579,7 +766,7 @@
                 <div class="message bot" style="animation-delay: 0.1s">
                     <div class="avatar">☀️</div>
                     <div class="message-content">
-                        Hello! I'm SolarBot, your solar energy assistant! I'm here to help you learn about solar panels, their benefits, costs, and why they're a great investment for your home or business. What would you like to know?
+                        Hello! I'm SolarBot, your AI-powered solar energy assistant! I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. How can I help you today?
                     </div>
                 </div>
             </div>
@@ -587,13 +774,14 @@
         </div>
 
         <div class="suggestions" id="suggestionsContainer">
-            <button class="suggestion-btn" onclick="sendSuggestion('Why should I get solar panels?')">💡 Why get solar?</button>
-            <button class="suggestion-btn" onclick="sendSuggestion('How much do solar panels cost?')">💰 Cost info</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('Why should I get solar panels?')">💡 Why solar?</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('How much do solar panels cost?')">💰 Costs</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('Schedule a consultation')">📅 Book appointment</button>
             <button class="suggestion-btn" onclick="sendSuggestion('How do solar panels work?')">⚡ How they work</button>
-            <button class="suggestion-btn" onclick="sendSuggestion('What are the environmental benefits?')">🌍 Environmental benefits</button>
         </div>
 
         <div class="input-container">
+            <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Voice input">🎤</button>
             <input type="text" id="userInput" placeholder="Ask me about solar power..." onkeypress="handleKeyPress(event)">
             <button id="sendBtn" onclick="sendMessage()">Send</button>
         </div>
@@ -604,9 +792,9 @@
         <div class="modal-content">
             <button class="close-modal" onclick="closeContactForm()">×</button>
             <h2>Get in Touch</h2>
-            <p>Interested in solar? Fill out this form and we'll contact you with more information!</p>
+            <p>Interested in solar? Fill out this form and we'll contact you!</p>
             <div id="formContent">
-                <form onsubmit="submitContactForm(event)">
+                <form id="contactForm" onsubmit="submitContactForm(event)">
                     <div class="form-group">
                         <label>Name *</label>
                         <input type="text" id="contactName" required>
@@ -624,24 +812,98 @@
                         <input type="text" id="contactZip" maxlength="10">
                     </div>
                     <div class="form-group">
+                        <label>Preferred Contact Method</label>
+                        <select id="contactMethod">
+                            <option value="email">Email</option>
+                            <option value="phone">Phone</option>
+                            <option value="text">Text Message</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>Message</label>
                         <textarea id="contactMessage" placeholder="Tell us about your property and solar interests..."></textarea>
                     </div>
-                    <button type="submit" class="submit-btn">Submit Request</button>
+                    <button type="submit" class="submit-btn" id="contactSubmitBtn">
+                        Submit Request
+                    </button>
                 </form>
             </div>
+        </div>
+    </div>
+
+    <!-- Calculator Modal -->
+    <div class="modal" id="calculatorModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeCalculator()">×</button>
+            <h2>Solar Savings Calculator</h2>
+            <p>Estimate your potential savings with solar panels</p>
+            
+            <div class="form-group">
+                <label>Monthly Electric Bill ($)</label>
+                <input type="number" id="monthlyBill" min="0" value="150" oninput="calculateSavings()">
+            </div>
+            <div class="form-group">
+                <label>Average Daily Sun Hours</label>
+                <input type="number" id="sunHours" min="1" max="12" value="5" step="0.5" oninput="calculateSavings()">
+            </div>
+            <div class="form-group">
+                <label>Roof Space Available (sq ft)</label>
+                <input type="number" id="roofSpace" min="0" value="400" oninput="calculateSavings()">
+            </div>
+            <div class="form-group">
+                <label>State</label>
+                <select id="stateSelect" onchange="calculateSavings()">
+                    <option value="CA">California</option>
+                    <option value="TX">Texas</option>
+                    <option value="FL">Florida</option>
+                    <option value="NY">New York</option>
+                    <option value="AZ">Arizona</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div id="calculatorResults"></div>
+            
+            <button class="submit-btn" style="margin-top: 20px;" onclick="saveCalculation()">
+                Save & Continue to Contact Form
+            </button>
         </div>
     </div>
 
     <script>
         let messageCount = 0;
         let currentTheme = 'light';
+        let isListening = false;
+        let recognition = null;
+        let chatHistory = [];
 
-        // Initialize first message animation
-        setTimeout(() => {
-            const firstMessage = document.querySelector('.message');
-            if (firstMessage) firstMessage.style.opacity = '1';
-        }, 100);
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const firstMessage = document.querySelector('.message');
+                if (firstMessage) firstMessage.style.opacity = '1';
+            }, 100);
+            
+            // Initialize speech recognition if available
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('userInput').value = transcript;
+                    stopVoice();
+                };
+                
+                recognition.onerror = function() {
+                    stopVoice();
+                };
+            } else {
+                document.getElementById('voiceBtn').style.display = 'none';
+            }
+        });
 
         function toggleTheme() {
             const body = document.body;
@@ -650,73 +912,225 @@
             if (currentTheme === 'light') {
                 body.classList.add('dark-theme');
                 toggle.textContent = '☀️';
-                toggle.style.color = '#000000';
                 currentTheme = 'dark';
             } else {
                 body.classList.remove('dark-theme');
                 toggle.textContent = '🌙';
-                toggle.style.color = '#000000';
                 currentTheme = 'light';
             }
         }
 
-        function updateSuggestions(context) {
-            const suggestionsContainer = document.getElementById('suggestionsContainer');
-            let suggestions = [];
-
-            if (context.includes('cost') || context.includes('price') || context.includes('afford')) {
-                suggestions = [
-                    '💳 Financing options',
-                    '🎁 Available incentives',
-                    '📊 Calculate savings',
-                    '⏱️ Payback period'
-                ];
-            } else if (context.includes('install') || context.includes('process')) {
-                suggestions = [
-                    '📋 Installation steps',
-                    '🏠 Roof requirements',
-                    '⏰ How long it takes',
-                    '🔧 Maintenance needs'
-                ];
-            } else if (context.includes('work') || context.includes('technology')) {
-                suggestions = [
-                    '🔋 Energy storage',
-                    '☁️ Cloudy day performance',
-                    '📈 Efficiency ratings',
-                    '🌡️ Weather impact'
-                ];
-            } else if (context.includes('environment') || context.includes('green')) {
-                suggestions = [
-                    '🌱 Carbon reduction',
-                    '💧 Water savings',
-                    '♻️ Panel recycling',
-                    '🌍 Global impact'
-                ];
-            } else if (context.includes('saving') || context.includes('bill')) {
-                suggestions = [
-                    '💰 Monthly savings',
-                    '📊 ROI timeline',
-                    '📉 Rate protection',
-                    '🏡 Property value boost'
-                ];
+        function toggleVoice() {
+            if (isListening) {
+                stopVoice();
             } else {
-                suggestions = [
-                    '💡 Why get solar?',
-                    '💰 Cost info',
-                    '⚡ How they work',
-                    '🌍 Environmental benefits'
-                ];
+                startVoice();
             }
+        }
 
-            suggestionsContainer.innerHTML = '';
-            suggestions.forEach((text, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'suggestion-btn';
-                btn.textContent = text;
-                btn.onclick = () => sendSuggestion(text.replace(/^[^\s]+\s/, ''));
-                btn.style.animationDelay = `${index * 0.1}s`;
-                suggestionsContainer.appendChild(btn);
+        function startVoice() {
+            if (recognition) {
+                isListening = true;
+                document.getElementById('voiceBtn').classList.add('listening');
+                recognition.start();
+            }
+        }
+
+        function stopVoice() {
+            if (recognition) {
+                isListening = false;
+                document.getElementById('voiceBtn').classList.remove('listening');
+                recognition.stop();
+            }
+        }
+
+        function openCalculator() {
+            document.getElementById('calculatorModal').classList.add('active');
+            calculateSavings();
+        }
+
+        function closeCalculator() {
+            document.getElementById('calculatorModal').classList.remove('active');
+        }
+
+        function calculateSavings() {
+            const monthlyBill = parseFloat(document.getElementById('monthlyBill').value) || 0;
+            const sunHours = parseFloat(document.getElementById('sunHours').value) || 5;
+            const roofSpace = parseFloat(document.getElementById('roofSpace').value) || 400;
+            const state = document.getElementById('stateSelect').value;
+            
+            // Calculations
+            const systemSize = Math.min((roofSpace / 80), 10); // kW
+            const annualProduction = systemSize * sunHours * 365 * 0.75; // kWh
+            const annualSavings = monthlyBill * 12 * 0.8;
+            const systemCost = systemSize * 2800; // Average cost per kW
+            const federalTaxCredit = systemCost * 0.3;
+            const netCost = systemCost - federalTaxCredit;
+            const paybackYears = netCost / annualSavings;
+            const twentyYearSavings = (annualSavings * 25) - netCost;
+            
+            const resultsHTML = `
+                <div class="calc-result">
+                    <h3>Your Estimated Savings</h3>
+                    <p style="margin-top: 10px;"><strong>Recommended System Size:</strong> ${systemSize.toFixed(1)} kW</p>
+                    <p><strong>Annual Savings:</strong> ${annualSavings.toFixed(0)}</p>
+                    <p><strong>Total Cost:</strong> ${systemCost.toFixed(0)}</p>
+                    <p><strong>After Tax Credit:</strong> ${netCost.toFixed(0)}</p>
+                    <p><strong>Payback Period:</strong> ${paybackYears.toFixed(1)} years</p>
+                    <p><strong>25-Year Net Savings:</strong> ${twentyYearSavings.toFixed(0)}</p>
+                </div>
+            `;
+            
+            document.getElementById('calculatorResults').innerHTML = resultsHTML;
+        }
+
+        function saveCalculation() {
+            const monthlyBill = document.getElementById('monthlyBill').value;
+            const results = document.getElementById('calculatorResults').innerText;
+            
+            closeCalculator();
+            
+            // Add to chat
+            addMessage("I'd like to save these calculations and get more information", true);
+            setTimeout(() => {
+                addBotMessageWithCalculator(results);
+            }, 800);
+        }
+
+        function addBotMessageWithCalculator(calcResults) {
+            const message = `Great! Based on your calculations, solar could save you a significant amount. Here's your personalized estimate:\n\n${calcResults}\n\nWould you like to schedule a free consultation to discuss these numbers in detail?`;
+            addMessage(message, false);
+            
+            // Add quick actions
+            setTimeout(() => {
+                addQuickActions();
+            }, 500);
+        }
+
+        function addQuickActions() {
+            const chatContainer = document.getElementById('chatContainer');
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'message bot';
+            actionsDiv.style.opacity = '0';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            avatar.textContent = '☀️';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.innerHTML = `
+                <strong>Quick Actions:</strong>
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="openContactForm()">📧 Contact Us</button>
+                    <button class="quick-action-btn" onclick="sendSuggestion('Schedule a consultation')">📅 Book Appointment</button>
+                    <button class="quick-action-btn" onclick="sendSuggestion('Tell me about financing options')">💳 Financing</button>
+                </div>
+            `;
+            
+            actionsDiv.appendChild(avatar);
+            actionsDiv.appendChild(messageContent);
+            chatContainer.appendChild(actionsDiv);
+            
+            setTimeout(() => {
+                actionsDiv.style.opacity = '1';
+            }, 10);
+            
+            scrollToBottom();
+        }
+
+        function exportChat() {
+            const messages = document.querySelectorAll('.message');
+            let chatText = 'SolarBot Chat History\n';
+            chatText += '='.repeat(50) + '\n\n';
+            
+            messages.forEach(msg => {
+                const isUser = msg.classList.contains('user');
+                const content = msg.querySelector('.message-content').innerText;
+                chatText += `${isUser ? 'You' : 'SolarBot'}: ${content}\n\n`;
             });
+            
+            // Create download
+            const blob = new Blob([chatText], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `solarbot-chat-${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            addMessage('Chat history exported successfully!', false);
+        }
+
+        async function submitContactForm(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('contactSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span>Submitting...';
+            
+            const formData = {
+                name: document.getElementById('contactName').value,
+                email: document.getElementById('contactEmail').value,
+                phone: document.getElementById('contactPhone').value,
+                zip: document.getElementById('contactZip').value,
+                contactMethod: document.getElementById('contactMethod').value,
+                message: document.getElementById('contactMessage').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            try {
+                // Simulate API call - Replace with your actual endpoint
+                // const response = await fetch('https://your-api.com/submit', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify(formData)
+                // });
+                
+                // Simulated delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Log to console (in production, this would go to your backend)
+                console.log('Form submitted:', formData);
+                
+                // Store in memory
+                if (!window.contactSubmissions) window.contactSubmissions = [];
+                window.contactSubmissions.push(formData);
+                
+                // Show success
+                const formContent = document.getElementById('formContent');
+                formContent.innerHTML = `
+                    <div class="success-message">
+                        <h3>Thank you, ${formData.name}!</h3>
+                        <p>We've received your information and will contact you via ${formData.contactMethod} within 24 hours.</p>
+                        <p>Confirmation sent to: ${formData.email}</p>
+                    </div>
+                    <button class="submit-btn" onclick="closeContactForm()">Close</button>
+                `;
+                
+                // Add bot message
+                setTimeout(() => {
+                    addMessage(`Perfect! I've submitted your contact information. Our solar experts will reach out to you via ${formData.contactMethod} within 24 hours. Is there anything else I can help you with?`, false);
+                    
+                    setTimeout(() => {
+                        closeContactForm();
+                        setTimeout(resetContactForm, 300);
+                    }, 2000);
+                }, 500);
+                
+            } catch (error) {
+                console.error('Submission error:', error);
+                const formContent = document.getElementById('formContent');
+                formContent.innerHTML = `
+                    <div class="error-message">
+                        <h3>Submission Error</h3>
+                        <p>We couldn't submit your form. Please try again or call us directly at 1-800-SOLAR-01</p>
+                    </div>
+                    <button class="submit-btn" onclick="location.reload()">Try Again</button>
+                `;
+            }
         }
 
         function openContactForm() {
@@ -727,62 +1141,95 @@
             document.getElementById('contactModal').classList.remove('active');
         }
 
-        function submitContactForm(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('contactName').value;
-            const email = document.getElementById('contactEmail').value;
-            const phone = document.getElementById('contactPhone').value;
-            const zip = document.getElementById('contactZip').value;
-            const message = document.getElementById('contactMessage').value;
-
-            // In a real application, you would send this data to a server
-            console.log('Form submitted:', { name, email, phone, zip, message });
-
-            // Show success message
+        function resetContactForm() {
             const formContent = document.getElementById('formContent');
             formContent.innerHTML = `
-                <div class="success-message">
-                    <h3>Thank you, ${name}!</h3>
-                    <p>We've received your information and will contact you soon about your solar options.</p>
-                </div>
-                <button class="submit-btn" onclick="closeContactForm()">Close</button>
+                <form id="contactForm" onsubmit="submitContactForm(event)">
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input type="text" id="contactName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="contactEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="contactPhone">
+                    </div>
+                    <div class="form-group">
+                        <label>Zip Code</label>
+                        <input type="text" id="contactZip" maxlength="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Contact Method</label>
+                        <select id="contactMethod">
+                            <option value="email">Email</option>
+                            <option value="phone">Phone</option>
+                            <option value="text">Text Message</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="contactMessage" placeholder="Tell us about your property and solar interests..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn" id="contactSubmitBtn">
+                        Submit Request
+                    </button>
+                </form>
             `;
+        }
 
-            // Add bot message about the form submission
-            setTimeout(() => {
-                addMessage(`Great news! I see you submitted a contact form. Our solar experts will reach out to ${email} within 24 hours to discuss your personalized solar solution. In the meantime, feel free to ask me any questions!`, false);
-                closeContactForm();
-                
-                // Reset form after closing
-                setTimeout(() => {
-                    formContent.innerHTML = `
-                        <form onsubmit="submitContactForm(event)">
-                            <div class="form-group">
-                                <label>Name *</label>
-                                <input type="text" id="contactName" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Email *</label>
-                                <input type="email" id="contactEmail" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone</label>
-                                <input type="tel" id="contactPhone">
-                            </div>
-                            <div class="form-group">
-                                <label>Zip Code</label>
-                                <input type="text" id="contactZip" maxlength="10">
-                            </div>
-                            <div class="form-group">
-                                <label>Message</label>
-                                <textarea id="contactMessage" placeholder="Tell us about your property and solar interests..."></textarea>
-                            </div>
-                            <button type="submit" class="submit-btn">Submit Request</button>
-                        </form>
-                    `;
-                }, 500);
-            }, 1000);
+        function updateSuggestions(context) {
+            const suggestionsContainer = document.getElementById('suggestionsContainer');
+            let suggestions = [];
+
+            if (context.includes('calculat') || context.includes('saving') || context.includes('estimate')) {
+                suggestions = [
+                    { display: '📧 Contact sales team', query: 'I want to speak with someone' },
+                    { display: '💳 Financing options', query: 'How can I finance solar panels?' },
+                    { display: '📅 Schedule consultation', query: 'Schedule a consultation' },
+                    { display: '🏠 Installation process', query: 'What is the installation process?' }
+                ];
+            } else if (context.includes('cost') || context.includes('price') || context.includes('afford')) {
+                suggestions = [
+                    { display: '🧮 Calculate savings', query: 'Calculate my solar savings' },
+                    { display: '💳 Financing options', query: 'How can I afford solar panels?' },
+                    { display: '🎁 Tax credits', query: 'What are the costs and incentives?' },
+                    { display: '⏱️ Payback period', query: 'How long until solar pays for itself?' }
+                ];
+            } else if (context.includes('schedule') || context.includes('appointment') || context.includes('consult')) {
+                suggestions = [
+                    { display: '📧 Fill contact form', query: 'I want to be contacted' },
+                    { display: '📞 Call me back', query: 'Can someone call me?' },
+                    { display: '🧮 Calculate first', query: 'Show me potential savings' },
+                    { display: '💬 More questions', query: 'I have more questions first' }
+                ];
+            } else if (context.includes('install') || context.includes('process')) {
+                suggestions = [
+                    { display: '📋 Installation steps', query: 'How long does installation take?' },
+                    { display: '🏠 Roof requirements', query: 'Will solar work on my roof?' },
+                    { display: '⏰ Timeline', query: 'What is the installation timeline?' },
+                    { display: '🔧 Maintenance', query: 'How much maintenance do solar panels need?' }
+                ];
+            } else {
+                suggestions = [
+                    { display: '🧮 Calculate savings', query: 'Calculate my solar savings' },
+                    { display: '💡 Why solar?', query: 'Why should I get solar panels?' },
+                    { display: '📅 Book appointment', query: 'Schedule a consultation' },
+                    { display: '💰 Costs', query: 'How much do solar panels cost?' }
+                ];
+            }
+
+            suggestionsContainer.innerHTML = '';
+            suggestions.forEach((item, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'suggestion-btn';
+                btn.textContent = item.display;
+                btn.onclick = () => sendSuggestion(item.query);
+                btn.style.animationDelay = `${index * 0.1}s`;
+                suggestionsContainer.appendChild(btn);
+            });
         }
 
         function scrollToBottom() {
@@ -793,7 +1240,6 @@
             });
         }
 
-        // Show/hide scroll button
         document.getElementById('chatContainer').addEventListener('scroll', function() {
             const scrollBottom = document.getElementById('scrollBottom');
             const isScrolledUp = this.scrollHeight - this.scrollTop - this.clientHeight > 100;
@@ -808,12 +1254,30 @@
         function getResponse(userMessage) {
             const msg = userMessage.toLowerCase();
             
+            // Calculator trigger
+            if (/calculat|estimate|saving|how much.*save/i.test(msg)) {
+                setTimeout(() => openCalculator(), 500);
+                return "Great! Let me open our solar savings calculator for you. Just enter a few details about your property and energy usage, and I'll show you personalized savings estimates!";
+            }
+            
+            // Appointment/Schedule trigger
+            if (/schedule|appointment|consult|book|meet|visit/i.test(msg)) {
+                setTimeout(() => openContactForm(), 500);
+                return "Excellent! I'd be happy to help you schedule a consultation. Let me open our contact form where you can share your availability and preferences. Our solar experts typically respond within 24 hours!";
+            }
+            
+            // Contact trigger
+            if (/contact|call|email|reach|speak|talk.*someone/i.test(msg)) {
+                setTimeout(() => openContactForm(), 500);
+                return "Perfect! Let me get you connected with our team. I'll open the contact form where you can share your information and preferred contact method. We'll reach out to you soon!";
+            }
+            
             // Greetings
             if (/(^|\s)(hi|hello|hey|greetings|good morning|good afternoon|good evening)($|\s|!)/i.test(msg)) {
                 const greetings = [
-                    "Hello! Great to meet you! I'm SolarBot, and I'm passionate about helping people understand solar energy. Solar panels are one of the best investments you can make - they save money, increase property value, and help our planet. What would you like to know about solar?",
-                    "Hey there! Thanks for chatting with me! I specialize in solar energy and I'd love to help you understand why solar panels are such a smart choice. They offer incredible financial savings and environmental benefits. What interests you most about solar power?",
-                    "Hi! Welcome! I'm excited to share information about solar energy with you. Going solar is easier and more affordable than ever, with amazing long-term benefits. What questions do you have about solar panels?"
+                    "Hello! Great to meet you! I'm SolarBot, your AI solar assistant. I can help you calculate savings, answer questions, and connect you with our expert team. What would you like to know about solar energy?",
+                    "Hey there! Thanks for chatting with me! I'm here to help you explore solar options. I can run calculations, explain benefits, or schedule a consultation. What interests you most?",
+                    "Hi! Welcome! I'm excited to help you discover solar energy. Whether you want to calculate potential savings, learn about costs, or speak with an expert, I'm here to help. What can I do for you today?"
                 ];
                 return greetings[Math.floor(Math.random() * greetings.length)];
             }
@@ -821,19 +1285,19 @@
             // Benefits and "why" questions
             if (/why|benefit|advantage|should i|worth it|good idea|pros/i.test(msg)) {
                 const benefits = [
-                    "Solar panels offer incredible benefits! Financially, most homeowners save $20,000-$75,000 over 25 years, with systems paying for themselves in 6-10 years. Your home value increases by 3-4%, and you'll enjoy energy independence. Environmentally, you're directly fighting climate change - a typical system offsets 3-4 tons of CO2 annually, equivalent to planting 100 trees each year! Plus, with current 30% federal tax credits, there's never been a better time to go solar.",
-                    "Great question! The advantages of solar are substantial. You'll dramatically reduce or eliminate your electricity bills, protect yourself from rising energy costs, and increase your property value. Most systems pay for themselves in 6-10 years through savings. Beyond finances, you're making a real environmental impact - preventing tons of carbon emissions and helping create a sustainable future. With incentives and financing options available, going solar is more accessible than ever!",
-                    "There are so many reasons to go solar! You'll save thousands on electricity over the system's 25+ year lifespan, lock in low energy costs while rates keep rising, and boost your home's resale value. You gain energy independence and security. Environmentally, you're part of the solution to climate change. Plus, solar technology is proven, reliable, and requires minimal maintenance. With tax credits covering 30% of costs, it's a smart financial and environmental decision!"
+                    "Solar panels offer incredible benefits! Financially, most homeowners save $20,000-$75,000 over 25 years, with systems paying for themselves in 6-10 years. Your home value increases by 3-4%, and you'll enjoy energy independence. Environmentally, you're directly fighting climate change - a typical system offsets 3-4 tons of CO2 annually! Plus, with current 30% federal tax credits, there's never been a better time. Want me to calculate your specific savings?",
+                    "Great question! The advantages are substantial: dramatically reduced electricity bills, protection from rising energy costs, increased property value, and real environmental impact. Most systems pay for themselves in 6-10 years through savings. With incentives and financing options available, going solar is more accessible than ever! Would you like to see personalized numbers for your home?",
+                    "There are so many reasons to go solar! You'll save thousands over the system's 25+ year lifespan, lock in low energy costs, boost your home's value, and help fight climate change. Plus, solar technology is proven and reliable. With 30% tax credits available, it's a smart financial decision! Shall I open the calculator to show you potential savings?"
                 ];
                 return benefits[Math.floor(Math.random() * benefits.length)];
             }
             
             // Cost questions
-            if (/cost|price|expensive|afford|pay|money|dollar|investment|cheap|financing/i.test(msg)) {
+            if (/cost|price|expensive|afford|pay|money|dollar|investment|financing/i.test(msg)) {
                 const costs = [
-                    "Great question about costs! A typical residential solar system runs $15,000-$25,000 before incentives. But here's the exciting part: the federal tax credit immediately reduces that by 30%, and many states offer additional rebates! Most homeowners pay an effective cost of $10,500-$17,500. You can finance with $0 down, and monthly payments are often less than your current electric bill. Over 25 years, you'll save $30,000-$75,000 depending on location. The system pays for itself in 6-10 years, then it's pure savings!",
-                    "Solar costs have dropped dramatically! The average 6kW system costs around $18,000 before incentives. With the 30% federal tax credit, that drops to about $12,600. Many states offer additional rebates that can reduce costs further. Financing options make solar accessible - you can start with $0 down and have monthly payments lower than your electric bill. You're essentially trading your utility payment for a solar payment that leads to ownership. After 6-10 years, it's paid off and you have free electricity for 15-20+ more years!",
-                    "Investing in solar is more affordable than ever! While a complete system costs $15,000-$25,000 upfront, the 30% federal tax credit plus state incentives can cut that in half. Most people finance their system, paying less monthly than their old electric bill. The system typically pays for itself through savings in 6-10 years. After that, you're generating free power! Over the system's 25-30 year life, you'll save $40,000-$100,000 depending on your electricity rates. It's one of the best investments you can make!"
+                    "Great question! A typical residential system runs $15,000-$25,000 before incentives. The federal tax credit immediately reduces that by 30%, and many states offer additional rebates. Most homeowners pay $10,500-$17,500 effectively. You can finance with $0 down, and monthly payments are often less than your electric bill. The system pays for itself in 6-10 years! Want to calculate exact costs for your situation?",
+                    "Solar costs have dropped dramatically! The average system costs around $18,000 before incentives. With the 30% federal tax credit, that's about $12,600. Financing options make solar accessible with $0 down. You're trading your utility payment for a solar payment that leads to ownership. After 6-10 years, you have free electricity! Should I run some numbers for you?",
+                    "Investing in solar is more affordable than ever! While systems cost $15,000-$25,000 upfront, the 30% federal tax credit plus state incentives can cut that significantly. Most people finance, paying less monthly than their old electric bill. Over 25-30 years, you'll save $40,000-$100,000! Let me open the calculator to show you personalized estimates."
                 ];
                 return costs[Math.floor(Math.random() * costs.length)];
             }
@@ -841,100 +1305,49 @@
             // How it works
             if (/(how.*work|technology|science|function|panel.*work)/i.test(msg)) {
                 const howItWorks = [
-                    "Solar panels work through fascinating technology! They contain photovoltaic cells made of silicon that absorb sunlight. When photons from the sun hit these cells, they knock electrons loose, creating an electrical current (DC power). An inverter then converts this to AC power that your home uses. On sunny days, you generate more than you need, and that excess power flows back to the grid, earning you credits with your utility! Even on cloudy days, you're generating power - modern panels are 15-20% efficient in diffuse light.",
-                    "The science is really cool! Solar panels use the photovoltaic effect - when light hits semiconductor materials (usually silicon), it frees electrons and creates electric current. Each panel has many cells working together to produce DC electricity. Your inverter converts this to standard AC power for your home. Any excess production gets sent to the grid, and you get credited for it through net metering. The system works automatically - panels generate power whenever there's light, and your inverter manages everything seamlessly!",
-                    "Solar technology is elegantly simple! Photovoltaic cells in your panels absorb photons from sunlight. This energy excites electrons in the silicon, causing them to flow and create DC electricity. The inverter converts this to AC power compatible with your home's electrical system. During peak sun hours, you'll generate more than you use - this excess goes to the grid and you earn credits. At night or on cloudy days, you draw from the grid using your banked credits. It's completely automated and requires no interaction from you!"
+                    "Solar panels use photovoltaic cells made of silicon that absorb sunlight. When photons hit these cells, they knock electrons loose, creating DC electrical current. An inverter converts this to AC power for your home. On sunny days, excess power flows back to the grid, earning you credits! Even on cloudy days, modern panels generate 15-20% of peak power. It's completely automated!",
+                    "The technology is fascinating! Photovoltaic cells absorb light photons, which frees electrons and creates electric current. Each panel has many cells producing DC electricity. Your inverter converts this to standard AC power. Any excess goes to the grid for credits through net metering. The system works automatically whenever there's light!",
+                    "Solar panels use the photovoltaic effect - light energy excites electrons in silicon, creating DC electricity. The inverter converts this to AC power for your home. During peak sun, you generate more than you use - this excess earns grid credits. At night, you draw from the grid using banked credits. It's self-managing!"
                 ];
                 return howItWorks[Math.floor(Math.random() * howItWorks.length)];
             }
             
             // Environmental questions
-            if (/environment|climate|carbon|green|clean|planet|earth|eco|sustainable|pollution/i.test(msg)) {
+            if (/environment|climate|carbon|green|clean|planet|eco|sustainable|pollution/i.test(msg)) {
                 const environmental = [
-                    "The environmental impact of solar is phenomenal! Every year, a typical residential system prevents 3-4 tons of carbon dioxide emissions - that's equivalent to planting 100 trees annually or taking a car off the road. Over 25 years, your system could offset over 100 tons of CO2! Solar produces zero air pollution, uses no water (unlike coal or natural gas plants), and helps combat climate change directly. You're also reducing demand for fossil fuels, which means less mining, drilling, and environmental destruction. Going solar means you're actively creating a cleaner, healthier planet!",
-                    "Solar power is one of the best things you can do for the environment! A single home solar system offsets the equivalent of driving 100,000 miles in a gas car over its lifetime. It prevents tons of harmful emissions - CO2, sulfur dioxide, nitrogen oxides - that contribute to smog, acid rain, and climate change. Unlike fossil fuel plants, solar uses no water and creates no toxic waste. You're directly reducing the need for coal and natural gas, helping transition our energy grid to clean, renewable sources. It's personal climate action that really makes a difference!",
-                    "The environmental benefits are incredible and immediate! From day one, your solar system starts preventing carbon emissions. Over its lifetime, it'll offset 100+ tons of CO2 - like planting thousands of trees. You're eliminating air and water pollution from your electricity consumption. Solar panels require no fuel, produce no emissions, and use no water during operation. You're helping reduce our dependence on fossil fuels and supporting the growth of renewable energy infrastructure. Every kilowatt-hour you generate is one less from coal or gas. It's powerful environmental action!"
+                    "The environmental impact is phenomenal! Every year, a typical system prevents 3-4 tons of CO2 emissions - equivalent to planting 100 trees annually. Over 25 years, that's 100+ tons of CO2 offset! Solar produces zero air pollution, uses no water, and directly combats climate change. You're reducing demand for fossil fuels and helping create a cleaner planet!",
+                    "Solar power is one of the best environmental actions you can take! A home solar system offsets the equivalent of driving 100,000 miles in a gas car over its lifetime. It prevents harmful emissions that cause smog, acid rain, and climate change. Unlike fossil fuel plants, solar uses no water and creates no toxic waste. It's personal climate action that really matters!",
+                    "The benefits are immediate and lasting! From day one, your system starts preventing carbon emissions. Over its lifetime, it'll offset 100+ tons of CO2 - like planting thousands of trees. You eliminate air and water pollution from your electricity use. Every kilowatt-hour you generate is one less from coal or gas. It's powerful environmental impact!"
                 ];
                 return environmental[Math.floor(Math.random() * environmental.length)];
             }
             
-            // Savings specific
-            if (/sav(e|ing)|bill|electricity cost|reduce.*bill|electric.*bill/i.test(msg)) {
-                const savings = [
-                    "The savings from solar are substantial and long-lasting! Most homeowners save $1,500-$3,000 annually on electricity bills, depending on their location and energy usage. In high-cost states like California, Hawaii, or Massachusetts, annual savings can exceed $4,000! Over the typical 25-year lifespan, that's $37,500-$100,000 in total savings. Even better, you're protected from rising electricity rates - while your neighbors' bills increase 3-5% yearly, your energy cost stays locked in. Net metering in most states means you can bank excess summer production for winter use!",
-                    "Solar delivers impressive financial returns! Average savings range from $10,000-$30,000 over 20 years, but in expensive electricity markets, savings can hit $60,000-$100,000! You're essentially pre-paying for decades of electricity at today's rates, protecting yourself from future rate hikes. Most systems generate a 10-20% annual return on investment. In many areas, solar panels can reduce your monthly electricity costs by 50-90%. That's real money staying in your pocket every month, year after year!",
-                    "You'll see real savings from day one! The typical household saves $100-$250 per month on electricity, which adds up to thousands annually. Over the system's life, you're looking at $40,000-$80,000 in savings for most homeowners. In sunny states with high electricity costs, savings can exceed $100,000! Plus, you're insulated from utility rate increases that typically rise 3-5% per year. Your solar payment (if financed) stays the same, and once paid off, your electricity is essentially free for another 10-15 years!"
-                ];
-                return savings[Math.floor(Math.random() * savings.length)];
-            }
-            
-            // Installation
-            if (/install|setup|process|long.*take|how.*installed|timeline/i.test(msg)) {
-                const installation = [
-                    "The installation process is surprisingly smooth and quick! After choosing your installer, they'll design a custom system for your roof, which usually takes about a week. Then comes permitting, which takes 2-6 weeks depending on your local government. The actual installation is amazingly fast - just 1-3 days! Professional installers mount the panels, connect the inverter and electrical systems, and test everything. After installation, there's a final inspection and utility approval, which takes another 2-4 weeks. From contract signing to generating power, most homeowners are up and running within 2-3 months!",
-                    "Installing solar is easier than most people think! The process starts with a site assessment and custom design (1 week). Your installer handles all permit applications - this bureaucratic step takes 2-6 weeks but requires nothing from you. When permits arrive, installation happens fast - typically 1-3 days for a residential system. Crews work efficiently, mounting panels, wiring systems, and installing your inverter. After a quick inspection and utility interconnection approval (2-4 weeks), you flip the switch! The whole journey is usually 2-3 months, and your installer manages everything.",
-                    "From decision to solar power, here's the timeline: First, free consultations and system design (1 week). Then permitting - your installer submits all paperwork to local authorities (2-6 weeks). Installation day arrives and takes just 1-3 days - teams mount panels, install inverters, connect everything, and test the system. You'll barely notice them! Finally, inspection and grid connection approval (2-4 weeks). Most systems are generating power within 60-90 days of signing. Your installer coordinates everything, so it's hassle-free for you!"
-                ];
-                return installation[Math.floor(Math.random() * installation.length)];
-            }
-            
-            // Maintenance
-            if (/maintain|maintenance|care|clean|upkeep|last|durable|lifespan/i.test(msg)) {
-                const maintenance = [
-                    "Solar panels are incredibly low-maintenance! They have no moving parts, so there's very little that can break or wear out. Rain naturally keeps them clean in most areas, but if you're in a dusty location, an occasional rinse with a garden hose is all you need. Most manufacturers recommend a professional inspection every 3-5 years, but it's not always necessary. Solar panels are warrantied for 25 years and typically last 30-35 years while maintaining 80-85% efficiency. The inverter may need replacement after 10-15 years (cost: $1,000-$2,000), but that's your only significant maintenance expense. It's truly set-it-and-forget-it!",
-                    "Maintenance is minimal - that's one of solar's best features! Panels are built to withstand decades of weather with virtually no attention. They're self-cleaning in most climates thanks to rain. If needed, spray them with water once or twice a year. No chemicals, no scrubbing required. The panels themselves have no moving parts and are extremely durable. Most come with 25-year performance warranties and 10-12 year equipment warranties. They'll keep producing power for 30+ years with efficiency only gradually declining. Besides a possible inverter replacement midway through, maintenance costs are near zero!",
-                    "One of solar's biggest advantages is how little maintenance it needs! Panels are designed to sit on your roof for decades with minimal intervention. They're weatherproof, durable, and self-sufficient. Occasional rain keeps them clean - dust and debris wash right off. If you live in a very dusty area, hosing them down 1-2 times a year maintains peak performance. No chemicals, no special equipment needed. The panels have 25-30 year lifespans, and inverters last 10-15 years. Total maintenance costs over the system's life are usually under $2,000. It's hands-off solar power!"
-                ];
-                return maintenance[Math.floor(Math.random() * maintenance.length)];
-            }
-
-            // Weather/cloudy concerns
-            if (/cloud|rain|weather|winter|shade|snow|night/i.test(msg)) {
-                const weather = [
-                    "Solar panels work great in various weather conditions! While they're most efficient in direct sunlight, they still generate power on cloudy days - typically 10-25% of peak output. Modern panels are designed to capture diffuse light effectively. Rain actually helps by cleaning your panels naturally! In winter, panels can be more efficient because they work better in cold temperatures (though shorter days mean less total production). Snow usually slides right off tilted panels, or melts quickly since panels generate heat. Even in cloudy cities like Seattle, solar makes great financial sense!",
-                    "Don't let clouds worry you! Solar panels generate electricity whenever there's daylight, not just direct sun. On overcast days, you'll still produce 10-25% of your peak capacity - that's more than enough to offset your usage. Annual production is what matters, and sunny days more than compensate for cloudy ones. Rain is actually beneficial, keeping panels clean. Snow typically melts quickly or slides off due to the panel angle and heat. At night, you simply draw from the grid using credits earned during the day. The system is designed to work year-round in all weather!",
-                    "Weather variations are already factored into solar calculations! Yes, panels produce less on cloudy days (10-25% of peak), but they still generate power. The key is annual production - sunny summer days produce excess power that makes up for winter's shorter days. Rain keeps panels clean and doesn't hurt production. Snow rarely sticks to tilted panels and melts quickly. Even in less sunny regions, solar provides excellent returns. Your installer designs systems based on your local weather patterns, ensuring you get the predicted savings regardless of clouds or rain!"
-                ];
-                return weather[Math.floor(Math.random() * weather.length)];
-            }
-
-            // Roof concerns
-            if (/roof|house|home|property|structure|mount/i.test(msg)) {
-                const roof = [
-                    "Most homes are perfect for solar! During the free assessment, installers evaluate your roof's age, condition, orientation, and shading. South, west, and southwest-facing roofs are ideal, but east-facing works too. Your roof should have 15+ years of remaining life - if it needs replacement soon, it's smart to do that first so you don't have to remove panels later. Solar panels actually protect and extend roof life by shielding shingles from weather! If your roof isn't suitable, ground-mounted systems or community solar are great alternatives. Modern installation works with virtually any roof type!",
-                    "Your roof is probably great for solar! Installers check orientation (south is best, but west and east work), condition, and shading during the site assessment. As long as your roof has 15+ years of life left, you're good to go. If replacement is needed soon, doing it before installation makes sense. The great news? Solar panels actually protect your roof from weather damage and can extend its lifespan! Panels work on asphalt shingles, tile, metal - almost any material. If roof mounting isn't ideal, ground systems are an option. Free assessments tell you exactly what will work for your home!",
-                    "Solar works on most roofs! What matters is orientation (south/west/east facing), condition (15+ years remaining life), and minimal shading. During the free consultation, professionals evaluate your specific situation. If your roof needs work soon, replacing it before installation saves hassle later. Here's a bonus: panels actually extend roof life by protecting it from sun, rain, and hail! Modern mounting systems work with all common roofing materials. If your roof truly isn't suitable due to shade or orientation, ground-mount systems or community solar programs are excellent alternatives!"
-                ];
-                return roof[Math.floor(Math.random() * roof.length)];
-            }
-
-            // Thank you responses
+            // Thank you
             if (/thank|thanks|appreciate/i.test(msg)) {
                 const thanks = [
-                    "You're very welcome! I'm always thrilled to help people discover the benefits of solar energy. Going solar is one of the best decisions you can make for your finances and the environment. Do you have any other questions about solar panels?",
-                    "Happy to help! I love talking about solar energy - it's such a smart investment. If you have more questions about costs, installation, or anything else solar-related, just ask!",
-                    "My pleasure! Solar energy is my passion, and I'm glad I could help you understand it better. Feel free to ask anything else about solar panels or renewable energy!"
+                    "You're very welcome! I'm always happy to help people discover solar benefits. Is there anything else you'd like to know, or would you like to calculate your potential savings?",
+                    "My pleasure! Solar energy is my passion. Feel free to ask more questions, use the calculator, or schedule a consultation anytime!",
+                    "Happy to help! If you'd like personalized numbers or want to speak with our team, just let me know!"
                 ];
                 return thanks[Math.floor(Math.random() * thanks.length)];
             }
-
+            
             // Goodbye
             if (/bye|goodbye|see you|gotta go|later/i.test(msg)) {
                 const goodbyes = [
-                    "Thanks for chatting with me about solar energy! I hope I've helped you understand why solar is such a smart investment. If you have more questions in the future, I'm always here. Have a sunny day! ☀️",
-                    "It was great talking with you! I hope you'll consider going solar - it's truly a win-win for your wallet and the planet. Come back anytime you have questions. Take care! ☀️",
-                    "Goodbye! Thanks for learning about solar with me. Remember, going solar is easier and more affordable than ever. Feel free to return with any questions. Stay bright! ☀️"
+                    "Thanks for chatting! I hope I've helped you understand why solar is such a smart investment. Feel free to return anytime with questions. Have a sunny day! ☀️",
+                    "It was great talking with you! Consider calculating your savings or scheduling a consultation. Come back anytime. Take care! ☀️",
+                    "Goodbye! Remember, our calculator and team are here whenever you're ready. Stay bright! ☀️"
                 ];
                 return goodbyes[Math.floor(Math.random() * goodbyes.length)];
             }
 
-            // Default response - gentle redirect
+            // Default
             const redirects = [
-                "That's an interesting topic! While I enjoy chatting about various subjects, my real expertise is in solar energy. I'd love to help you understand how solar panels could benefit you! Are you considering solar for your home, or just curious about the technology? I can explain costs, savings, installation, or any other aspect!",
-                "I appreciate the question! Though my specialty is solar energy, I'm happy to chat briefly. Speaking of which, have you thought about whether solar panels might be right for your situation? I can help you understand the financial benefits, environmental impact, and the simple installation process!",
-                "Interesting! While I'm most knowledgeable about solar energy and renewable power, I don't mind a bit of casual conversation. Since you're here though, can I share why solar panels are such a great investment? They've dropped dramatically in price, offer amazing returns, and help fight climate change. What would you like to know?",
-                "That's a good question! I'm primarily focused on helping people understand solar energy, but I'm always happy to have a friendly chat. Is there anything about solar panels you're curious about? I can explain how they work, what they cost, how much you'd save, or anything else solar-related!",
-                "Thanks for asking! While that's a bit outside my solar expertise, I'm here to help with a friendly conversation. Since we're chatting, have you ever considered solar panels? They're more affordable than most people think, and the savings can be substantial. Want to learn more about them?"
+                "That's interesting! While my expertise is solar energy, I'm happy to chat. Since you're here, have you considered calculating your potential solar savings? I can show you personalized estimates in seconds!",
+                "Good question! I specialize in solar energy, but I can try to help. Speaking of which, would you like to see how much you could save with solar panels? I have a quick calculator that gives instant results!",
+                "Thanks for asking! I focus mainly on solar energy topics. By the way, have you thought about whether solar might work for your home? I can help you explore the options with our calculator or by connecting you with our team!",
+                "I appreciate the question! While solar energy is my specialty, I'm here for friendly conversation too. Would you like to learn about solar savings, schedule a consultation, or explore what solar could do for you?"
             ];
 
             return redirects[Math.floor(Math.random() * redirects.length)];
@@ -964,14 +1377,19 @@
             
             chatContainer.appendChild(messageDiv);
             
-            // Trigger animation
+            // Store in history
+            chatHistory.push({
+                role: isUser ? 'user' : 'assistant',
+                content: content,
+                timestamp: new Date().toISOString()
+            });
+            
             setTimeout(() => {
                 messageDiv.style.opacity = '1';
             }, 10);
             
             chatContainer.scrollTop = chatContainer.scrollHeight;
             
-            // Update suggestions based on bot response
             if (!isUser) {
                 updateSuggestions(content.toLowerCase());
             }
@@ -1001,9 +1419,7 @@
 
         function hideTypingIndicator() {
             const indicator = document.getElementById('typingIndicator');
-            if (indicator) {
-                indicator.remove();
-            }
+            if (indicator) indicator.remove();
         }
 
         function sendMessage() {
@@ -1043,11 +1459,13 @@
             }
         }
 
-        // Close modal when clicking outside
-        document.getElementById('contactModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeContactForm();
-            }
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
         });
     </script>
 </body>
