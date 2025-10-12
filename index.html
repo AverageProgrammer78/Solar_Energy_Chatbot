@@ -892,9 +892,18 @@
     <div class="container">
         <div class="header">
             <div class="header-buttons">
-                <button class="header-btn" onclick="openContactForm()">📧 Contact Us</button>
-                <button class="header-btn" onclick="clearChat()">🗑️ Clear Chat</button>
+                <button class="header-btn" onclick="openContactForm()">📧 Contact</button>
+                <button class="header-btn" onclick="clearChat()">🗑️ Clear</button>
                 <button class="header-btn" onclick="showFunFact()">💡 Fun Fact</button>
+                <button class="header-btn" onclick="showStats()">📊 Stats</button>
+                <button class="header-btn" onclick="toggleSearch()">🔍 Search</button>
+            </div>
+            <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊 Sound ON</button>
+            <div class="typing-speed-control">
+                <span style="font-size: 10px; opacity: 0.8;">Speed:</span>
+                <button class="speed-btn" onclick="setTypingSpeed('slow')">🐢</button>
+                <button class="speed-btn active" onclick="setTypingSpeed('normal')">⚡</button>
+                <button class="speed-btn" onclick="setTypingSpeed('fast')">🚀</button>
             </div>
             <h1>☀️ SolarBot</h1>
             <p>Your AI-powered solar energy assistant</p>
@@ -902,6 +911,10 @@
         </div>
 
         <div class="chat-wrapper">
+            <div class="search-container" id="searchContainer">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search messages..." oninput="searchMessages()">
+                <div class="search-results" id="searchResults"></div>
+            </div>
             <div class="chat-container" id="chatContainer">
                 <div class="message bot" style="animation-delay: 0.1s">
                     <div class="avatar">☀️</div>
@@ -922,7 +935,8 @@
 
         <div class="input-container">
             <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Voice input">🎤</button>
-            <input type="text" id="userInput" placeholder="Ask me about solar power..." onkeypress="handleKeyPress(event)">
+            <input type="text" id="userInput" placeholder="Ask me about solar power..." onkeypress="handleKeyPress(event)" oninput="updateWordCount()">
+            <div class="word-count" id="wordCount">0 / 500</div>
             <button id="sendBtn" onclick="sendMessage()">Send</button>
         </div>
     </div>
@@ -946,6 +960,9 @@
         let recognition = null;
         let chatHistory = [];
         let messageIdCounter = 0;
+        let typingSpeed = 1000;
+        let soundEnabled = true;
+        let reactions = {};
 
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
@@ -1201,6 +1218,177 @@
             return redirects[Math.floor(Math.random() * redirects.length)];
         }
 
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            if (type === 'send') {
+                oscillator.frequency.value = 800;
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } else if (type === 'receive') {
+                oscillator.frequency.value = 600;
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.15);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            btn.textContent = soundEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
+            showToast(soundEnabled ? 'Sound enabled' : 'Sound disabled');
+        }
+
+        function setTypingSpeed(speed) {
+            document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (speed === 'slow') typingSpeed = 2000;
+            else if (speed === 'normal') typingSpeed = 1000;
+            else if (speed === 'fast') typingSpeed = 300;
+            
+            showToast(`Typing speed set to ${speed}`);
+        }
+
+        function showStats() {
+            const totalMessages = chatHistory.length;
+            const userMessages = chatHistory.filter(m => m.role === 'user').length;
+            const botMessages = chatHistory.filter(m => m.role === 'assistant').length;
+            const totalWords = chatHistory.reduce((sum, m) => sum + m.content.split(' ').length, 0);
+            
+            const statsHTML = `
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-number">${totalMessages}</span>
+                        <div class="stat-label">Total Messages</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${userMessages}</span>
+                        <div class="stat-label">Your Messages</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${botMessages}</span>
+                        <div class="stat-label">Bot Responses</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${totalWords}</span>
+                        <div class="stat-label">Total Words</div>
+                    </div>
+                </div>
+            `;
+            
+            addCustomMessage(statsHTML, false);
+        }
+
+        function addCustomMessage(htmlContent, isUser) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            messageDiv.style.opacity = '0';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            avatar.textContent = isUser ? '👤' : '☀️';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.innerHTML = htmlContent;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            
+            chatContainer.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.style.opacity = '1';
+            }, 10);
+            
+            scrollToBottom();
+        }
+
+        function updateWordCount() {
+            const input = document.getElementById('userInput');
+            const count = input.value.length;
+            const wordCountEl = document.getElementById('wordCount');
+            wordCountEl.textContent = `${count} / 500`;
+            
+            if (count > 450) {
+                wordCountEl.style.color = '#f44336';
+            } else if (count > 400) {
+                wordCountEl.style.color = '#FFA500';
+            } else {
+                wordCountEl.style.color = 'var(--text-secondary)';
+            }
+            
+            if (count >= 500) {
+                input.value = input.value.substring(0, 500);
+            }
+        }
+
+        function toggleSearch() {
+            const searchContainer = document.getElementById('searchContainer');
+            searchContainer.classList.toggle('active');
+            if (searchContainer.classList.contains('active')) {
+                document.getElementById('searchInput').focus();
+            }
+        }
+
+        function searchMessages() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const resultsEl = document.getElementById('searchResults');
+            
+            if (!query) {
+                resultsEl.textContent = '';
+                document.querySelectorAll('.search-highlight').forEach(el => {
+                    el.outerHTML = el.textContent;
+                });
+                return;
+            }
+            
+            const matches = chatHistory.filter(m => 
+                m.content.toLowerCase().includes(query)
+            );
+            
+            resultsEl.textContent = `Found ${matches.length} message${matches.length !== 1 ? 's' : ''}`;
+            
+            // Highlight matches
+            document.querySelectorAll('.message-content').forEach(el => {
+                const text = el.textContent;
+                if (text.toLowerCase().includes(query)) {
+                    const regex = new RegExp(`(${query})`, 'gi');
+                    const highlighted = text.replace(regex, '<span class="search-highlight">$1</span>');
+                    el.innerHTML = highlighted;
+                }
+            });
+        }
+
+        function addReaction(messageId, emoji) {
+            if (!reactions[messageId]) reactions[messageId] = {};
+            if (!reactions[messageId][emoji]) reactions[messageId][emoji] = 0;
+            reactions[messageId][emoji]++;
+            
+            const messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+            const reactionBtn = messageEl.querySelector(`[data-emoji="${emoji}"]`);
+            if (reactionBtn) {
+                reactionBtn.classList.add('reacted');
+                const countEl = reactionBtn.querySelector('.reaction-count');
+                if (countEl) countEl.textContent = reactions[messageId][emoji];
+            }
+            
+            playSound('receive');
+        }
+
         function getRandomSolarFact() {
             const facts = [
                 "🌟 Solar Fact: The sun provides enough energy to Earth in one hour to power the entire world for a year! We just need to capture it better.",
@@ -1286,7 +1474,8 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
             messageDiv.style.opacity = '0';
-            messageDiv.setAttribute('data-message-id', messageIdCounter++);
+            const currentMessageId = messageIdCounter++;
+            messageDiv.setAttribute('data-message-id', currentMessageId);
             
             const avatar = document.createElement('div');
             avatar.className = 'avatar';
@@ -1294,14 +1483,44 @@
             
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content';
-            messageContent.textContent = content;
             
-            // Add copy button for bot messages
+            // Add main content
+            const contentText = document.createElement('div');
+            contentText.textContent = content;
+            messageContent.appendChild(contentText);
+            
+            // Add timestamp
+            const timestamp = document.createElement('div');
+            timestamp.className = 'message-timestamp';
+            const now = new Date();
+            timestamp.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            messageContent.appendChild(timestamp);
+            
+            // Add reactions for bot messages
             if (!isUser) {
+                const reactionsDiv = document.createElement('div');
+                reactionsDiv.className = 'reaction-buttons';
+                reactionsDiv.innerHTML = `
+                    <button class="reaction-btn" data-emoji="👍" onclick="addReaction(${currentMessageId}, '👍')">
+                        👍 <span class="reaction-count">0</span>
+                    </button>
+                    <button class="reaction-btn" data-emoji="❤️" onclick="addReaction(${currentMessageId}, '❤️')">
+                        ❤️ <span class="reaction-count">0</span>
+                    </button>
+                    <button class="reaction-btn" data-emoji="😊" onclick="addReaction(${currentMessageId}, '😊')">
+                        😊 <span class="reaction-count">0</span>
+                    </button>
+                    <button class="reaction-btn" data-emoji="🎉" onclick="addReaction(${currentMessageId}, '🎉')">
+                        🎉 <span class="reaction-count">0</span>
+                    </button>
+                `;
+                messageContent.appendChild(reactionsDiv);
+                
+                // Add copy button
                 const actionsDiv = document.createElement('div');
                 actionsDiv.className = 'message-actions';
                 actionsDiv.innerHTML = `
-                    <button class="action-icon tooltip" onclick="copyMessage(${messageIdCounter - 1})" title="Copy message">
+                    <button class="action-icon tooltip" onclick="copyMessage(${currentMessageId})" title="Copy message">
                         📋
                         <span class="tooltiptext">Copy</span>
                     </button>
@@ -1312,9 +1531,11 @@
             if (isUser) {
                 messageDiv.appendChild(messageContent);
                 messageDiv.appendChild(avatar);
+                playSound('send');
             } else {
                 messageDiv.appendChild(avatar);
                 messageDiv.appendChild(messageContent);
+                playSound('receive');
             }
             
             chatContainer.appendChild(messageDiv);
@@ -1333,9 +1554,45 @@
             
             if (!isUser) {
                 updateSuggestions(content.toLowerCase());
+                
+                // Add contextual quick replies
+                if (content.toLowerCase().includes('consultation') || content.toLowerCase().includes('appointment')) {
+                    setTimeout(() => addQuickReplies(currentMessageId, [
+                        'Yes, schedule it!',
+                        'Tell me more first',
+                        'What are the costs?'
+                    ]), 500);
+                } else if (content.toLowerCase().includes('cost') || content.toLowerCase().includes('price')) {
+                    setTimeout(() => addQuickReplies(currentMessageId, [
+                        'What about financing?',
+                        'Any tax credits?',
+                        'Schedule consultation'
+                    ]), 500);
+                }
             }
             
             messageCount++;
+        }
+
+        function addQuickReplies(messageId, replies) {
+            const messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+            if (!messageEl) return;
+            
+            const quickReplyDiv = document.createElement('div');
+            quickReplyDiv.className = 'quick-reply-container';
+            
+            replies.forEach(reply => {
+                const btn = document.createElement('button');
+                btn.className = 'quick-reply-btn';
+                btn.textContent = reply;
+                btn.onclick = () => {
+                    document.getElementById('userInput').value = reply;
+                    sendMessage();
+                };
+                quickReplyDiv.appendChild(btn);
+            });
+            
+            messageEl.querySelector('.message-content').appendChild(quickReplyDiv);
         }
 
         function showTypingIndicator() {
@@ -1371,6 +1628,7 @@
             
             addMessage(message, true);
             input.value = '';
+            updateWordCount();
             
             showTypingIndicator();
             
@@ -1380,7 +1638,7 @@
                 addMessage(response, false);
                 
                 input.focus();
-            }, 1000 + Math.random() * 500);
+            }, typingSpeed + Math.random() * 500);
         }
 
         function sendSuggestion(text) {
