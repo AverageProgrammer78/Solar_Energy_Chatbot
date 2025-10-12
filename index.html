@@ -65,7 +65,7 @@
             display: flex;
             flex-direction: column;
             height: 90vh;
-            max-height: 700px;
+            max-height: 800px;
             transition: background 0.3s ease, transform 0.3s ease;
         }
 
@@ -76,7 +76,7 @@
 
         .header {
             background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
-            padding: 25px;
+            padding: 30px 25px 20px 25px;
             text-align: center;
             color: var(--text-primary);
             position: relative;
@@ -91,29 +91,32 @@
             justify-content: center;
             gap: 10px;
             animation: slideDown 0.5s ease;
+            margin-top: 5px;
         }
 
         .header p {
             font-size: 14px;
             opacity: 0.9;
             animation: slideDown 0.5s ease 0.1s backwards;
+            margin-bottom: 15px;
         }
 
         .header-buttons {
-            position: absolute;
-            top: 25px;
-            left: 25px;
             display: flex;
-            gap: 10px;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 10px;
+            padding: 0 60px;
         }
 
         .header-btn {
             background: rgba(255, 255, 255, 0.3);
             border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
+            padding: 6px 14px;
+            border-radius: 15px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 12px;
             font-weight: 600;
             transition: all 0.3s ease;
             color: var(--text-primary);
@@ -127,8 +130,8 @@
 
         .theme-toggle {
             position: absolute;
-            top: 25px;
-            right: 25px;
+            top: 15px;
+            right: 15px;
             background: rgba(255, 255, 255, 0.3);
             border: none;
             width: 40px;
@@ -142,6 +145,7 @@
             transition: all 0.3s ease;
             animation: fadeIn 0.5s ease 0.2s backwards;
             color: #2C3E50;
+            z-index: 10;
         }
 
         .theme-toggle:hover {
@@ -158,12 +162,84 @@
             background: rgba(255, 165, 0, 0.4);
         }
 
+        .typing-speed-control {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .speed-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            padding: 4px 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .speed-btn.active {
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(1.1);
+        }
+
+        .speed-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .sound-toggle {
+            position: absolute;
+            top: 60px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            z-index: 10;
+        }
+
+        .sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
         .chat-container {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: scroll;
+            overflow-x: hidden;
             padding: 20px;
             background: var(--chat-bg);
             transition: background 0.3s ease;
+            scroll-behavior: smooth;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #FFA500;
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: #FF8C00;
         }
 
         .message {
@@ -239,59 +315,6 @@
             color: white;
         }
 
-        .calculator-widget {
-            background: var(--container-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 15px;
-            padding: 15px;
-            margin-top: 10px;
-            max-width: 400px;
-        }
-
-        .calculator-widget h4 {
-            color: var(--text-primary);
-            margin-bottom: 15px;
-        }
-
-        .calc-input-group {
-            margin-bottom: 15px;
-        }
-
-        .calc-input-group label {
-            display: block;
-            color: var(--text-secondary);
-            font-size: 13px;
-            margin-bottom: 5px;
-        }
-
-        .calc-input-group input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--input-bg);
-            color: var(--text-primary);
-        }
-
-        .calc-result {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .calc-result h3 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .calc-result p {
-            font-size: 13px;
-            opacity: 0.95;
-        }
-
         .avatar {
             width: 36px;
             height: 36px;
@@ -324,6 +347,7 @@
             gap: 10px;
             align-items: center;
             transition: background 0.3s ease;
+            position: relative;
         }
 
         #userInput {
@@ -389,7 +413,6 @@
 
         #sendBtn:active:not(:disabled) {
             transform: translateY(0);
-            animation: pulse 0.3s ease;
         }
 
         #sendBtn:disabled {
@@ -398,27 +421,30 @@
         }
 
         .suggestions {
-            padding: 10px 20px;
+            padding: 15px 20px;
             background: var(--container-bg);
             border-top: 1px solid var(--border-color);
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
             transition: all 0.3s ease;
-            max-height: 200px;
+            min-height: 80px;
             overflow-y: auto;
         }
 
         .suggestion-btn {
-            padding: 8px 16px;
+            padding: 14px 28px;
             background: var(--suggestion-bg);
             border: 1px solid var(--border-color);
             border-radius: 20px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 15px;
             transition: all 0.3s ease;
             color: var(--text-primary);
             animation: fadeIn 0.4s ease;
+            min-width: 160px;
+            font-weight: 500;
+            white-space: nowrap;
         }
 
         .suggestion-btn:hover {
@@ -471,174 +497,6 @@
             30% { transform: translateY(-10px); }
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--container-bg);
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            animation: slideUp 0.4s ease;
-            position: relative;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-content h2 {
-            color: var(--text-primary);
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-
-        .modal-content p {
-            color: var(--text-secondary);
-            margin-bottom: 25px;
-            font-size: 14px;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .close-modal:hover {
-            background: var(--suggestion-bg);
-            transform: rotate(90deg);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 14px;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s ease;
-            background: var(--input-bg);
-            color: var(--text-primary);
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #FFA500;
-            box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-            color: #2C3E50;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .submit-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 165, 0, 0.4);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .success-message {
-            background: #4CAF50;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-            animation: slideDown 0.4s ease;
-        }
-
-        .success-message h3 {
-            margin-bottom: 8px;
-        }
-
-        .error-message {
-            background: #f44336;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-            animation: slideDown 0.4s ease;
-        }
-
         .scroll-bottom {
             position: absolute;
             bottom: 20px;
@@ -670,61 +528,249 @@
 
         .chat-wrapper {
             position: relative;
-        }
-
-        .loading-spinner {
-            border: 3px solid var(--border-color);
-            border-top: 3px solid #FFA500;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .quick-actions {
+            flex: 1;
+            overflow: hidden;
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 10px;
+            flex-direction: column;
         }
 
-        .quick-action-btn {
-            padding: 8px 16px;
-            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-            color: #2C3E50;
-            border: none;
-            border-radius: 20px;
+        .message-timestamp {
+            font-size: 10px;
+            opacity: 0.6;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .stats-container {
+            background: var(--message-bot-bg);
+            border: 2px solid var(--message-bot-border);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: var(--suggestion-bg);
+            border-radius: 10px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFA500;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .word-count {
+            position: absolute;
+            bottom: 75px;
+            right: 30px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .reaction-buttons {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .reaction-btn {
+            background: var(--suggestion-bg);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .reaction-btn:hover {
+            transform: scale(1.2);
+            background: #FFA500;
+        }
+
+        .reaction-btn.reacted {
+            background: #FFA500;
+            transform: scale(1.1);
+        }
+
+        .reaction-count {
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .quick-reply-container {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .quick-reply-btn {
+            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
             font-weight: 600;
+            color: #2C3E50;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .quick-reply-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
+        }
+
+        .search-container {
+            padding: 10px 20px;
+            background: var(--container-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: none;
+        }
+
+        .search-container.active {
+            display: block;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            font-size: 13px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        .search-results {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .action-icon {
+            background: var(--suggestion-bg);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.3s ease;
         }
 
-        .quick-action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+        .action-icon:hover {
+            background: #FFA500;
+            transform: scale(1.1);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background-color: #555;
+            color: white;
+            text-align: center;
+            padding: 5px 10px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -40px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .search-highlight {
+            background-color: yellow;
+            color: black;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .easter-egg {
+            animation: rainbow 3s linear infinite;
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="header-buttons">
-                <button class="header-btn" onclick="openContactForm()">📧 Contact Us</button>
+            <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊 Sound ON</button>
+            <div class="typing-speed-control">
+                <span style="font-size: 10px; opacity: 0.8;">Speed:</span>
+                <button class="speed-btn" onclick="setTypingSpeed('slow')">🐢</button>
+                <button class="speed-btn active" onclick="setTypingSpeed('normal')">⚡</button>
+                <button class="speed-btn" onclick="setTypingSpeed('fast')">🚀</button>
             </div>
             <h1>☀️ SolarBot</h1>
             <p>Your AI-powered solar energy assistant</p>
             <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
+            <div class="header-buttons">
+                <button class="header-btn" onclick="openContactForm()">📧 Contact</button>
+                <button class="header-btn" onclick="clearChat()">🗑️ Clear</button>
+                <button class="header-btn" onclick="showFunFact()">💡 Fun Fact</button>
+                <button class="header-btn" onclick="showStats()">📊 Stats</button>
+                <button class="header-btn" onclick="toggleSearch()">🔍 Search</button>
+            </div>
         </div>
 
         <div class="chat-wrapper">
+            <div class="search-container" id="searchContainer">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search messages..." oninput="searchMessages()">
+                <div class="search-results" id="searchResults"></div>
+            </div>
             <div class="chat-container" id="chatContainer">
                 <div class="message bot" style="animation-delay: 0.1s">
                     <div class="avatar">☀️</div>
@@ -745,20 +791,9 @@
 
         <div class="input-container">
             <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Voice input">🎤</button>
-            <input type="text" id="userInput" placeholder="Ask me about solar power..." onkeypress="handleKeyPress(event)">
+            <input type="text" id="userInput" placeholder="Ask me about solar power..." onkeypress="handleKeyPress(event)" oninput="updateWordCount()">
+            <div class="word-count" id="wordCount">0 / 500</div>
             <button id="sendBtn" onclick="sendMessage()">Send</button>
-        </div>
-    </div>
-
-    <!-- Contact Form Modal -->
-    <div class="modal" id="contactModal">
-        <div class="modal-content" style="max-width: 650px;">
-            <button class="close-modal" onclick="closeContactForm()">×</button>
-            <h2>Get in Touch</h2>
-            <p>Interested in solar? Fill out this form and we'll contact you!</p>
-            <div id="formContent">
-                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf0bvHj2dJ3mAQo_FX-cdfG4md5pvnybIXOLCs67uYlFbIy7Q/viewform?embedded=true" width="100%" height="800" frameborder="0" marginheight="0" marginwidth="0" style="border-radius: 10px;">Loading…</iframe>
-            </div>
         </div>
     </div>
 
@@ -768,15 +803,17 @@
         let isListening = false;
         let recognition = null;
         let chatHistory = [];
+        let messageIdCounter = 0;
+        let typingSpeed = 1000;
+        let soundEnabled = true;
+        let reactions = {};
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 const firstMessage = document.querySelector('.message');
                 if (firstMessage) firstMessage.style.opacity = '1';
             }, 100);
             
-            // Initialize speech recognition if available
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 recognition = new SpeechRecognition();
@@ -849,113 +886,12 @@
             }
         }
 
-        function openCalculator() {
-            document.getElementById('calculatorModal').classList.add('active');
-            calculateSavings();
-        }
-
-        function closeCalculator() {
-            document.getElementById('calculatorModal').classList.remove('active');
-        }
-
-        function calculateSavings() {
-            const monthlyBill = parseFloat(document.getElementById('monthlyBill').value) || 0;
-            const sunHours = parseFloat(document.getElementById('sunHours').value) || 5;
-            const roofSpace = parseFloat(document.getElementById('roofSpace').value) || 400;
-            const state = document.getElementById('stateSelect').value;
-            
-            // Calculations
-            const systemSize = Math.min((roofSpace / 80), 10); // kW
-            const annualProduction = systemSize * sunHours * 365 * 0.75; // kWh
-            const annualSavings = monthlyBill * 12 * 0.8;
-            const systemCost = systemSize * 2800; // Average cost per kW
-            const federalTaxCredit = systemCost * 0.3;
-            const netCost = systemCost - federalTaxCredit;
-            const paybackYears = netCost / annualSavings;
-            const twentyYearSavings = (annualSavings * 25) - netCost;
-            
-            const resultsHTML = `
-                <div class="calc-result">
-                    <h3>Your Estimated Savings</h3>
-                    <p style="margin-top: 10px;"><strong>Recommended System Size:</strong> ${systemSize.toFixed(1)} kW</p>
-                    <p><strong>Annual Savings:</strong> ${annualSavings.toFixed(0)}</p>
-                    <p><strong>Total Cost:</strong> ${systemCost.toFixed(0)}</p>
-                    <p><strong>After Tax Credit:</strong> ${netCost.toFixed(0)}</p>
-                    <p><strong>Payback Period:</strong> ${paybackYears.toFixed(1)} years</p>
-                    <p><strong>25-Year Net Savings:</strong> ${twentyYearSavings.toFixed(0)}</p>
-                </div>
-            `;
-            
-            document.getElementById('calculatorResults').innerHTML = resultsHTML;
-        }
-
-        function saveCalculation() {
-            const monthlyBill = document.getElementById('monthlyBill').value;
-            const results = document.getElementById('calculatorResults').innerText;
-            
-            closeCalculator();
-            
-            // Add to chat
-            addMessage("I'd like to save these calculations and get more information", true);
-            setTimeout(() => {
-                addBotMessageWithCalculator(results);
-            }, 800);
-        }
-
-        function addBotMessageWithCalculator(calcResults) {
-            const message = `Great! Based on your calculations, solar could save you a significant amount. Here's your personalized estimate:\n\n${calcResults}\n\nWould you like to schedule a free consultation to discuss these numbers in detail?`;
-            addMessage(message, false);
-            
-            // Add quick actions
-            setTimeout(() => {
-                addQuickActions();
-            }, 500);
-        }
-
-        function addQuickActions() {
-            const chatContainer = document.getElementById('chatContainer');
-            const actionsDiv = document.createElement('div');
-            actionsDiv.className = 'message bot';
-            actionsDiv.style.opacity = '0';
-            
-            const avatar = document.createElement('div');
-            avatar.className = 'avatar';
-            avatar.textContent = '☀️';
-            
-            const messageContent = document.createElement('div');
-            messageContent.className = 'message-content';
-            messageContent.innerHTML = `
-                <strong>Quick Actions:</strong>
-                <div class="quick-actions">
-                    <button class="quick-action-btn" onclick="openContactForm()">📧 Contact Us</button>
-                    <button class="quick-action-btn" onclick="sendSuggestion('Schedule a consultation')">📅 Book Appointment</button>
-                    <button class="quick-action-btn" onclick="sendSuggestion('Tell me about financing options')">💳 Financing</button>
-                </div>
-            `;
-            
-            actionsDiv.appendChild(avatar);
-            actionsDiv.appendChild(messageContent);
-            chatContainer.appendChild(actionsDiv);
-            
-            setTimeout(() => {
-                actionsDiv.style.opacity = '1';
-            }, 10);
-            
-            scrollToBottom();
-        }
-
         function openContactForm() {
-            // Open Google Form in a new tab
             window.open('https://docs.google.com/forms/d/e/1FAIpQLSf0bvHj2dJ3mAQo_FX-cdfG4md5pvnybIXOLCs67uYlFbIy7Q/viewform', '_blank');
             
-            // Add bot message after a short delay
             setTimeout(() => {
                 addMessage("I've opened our contact form in a new tab! Please fill it out and our solar experts will reach out to you within 24 hours. Feel free to ask me any other questions while you're here!", false);
             }, 300);
-        }
-
-        function closeContactForm() {
-            document.getElementById('contactModal').classList.remove('active');
         }
 
         function updateSuggestions(context) {
@@ -1005,10 +941,12 @@
 
         function scrollToBottom() {
             const chatContainer = document.getElementById('chatContainer');
-            chatContainer.scrollTo({
-                top: chatContainer.scrollHeight,
-                behavior: 'smooth'
-            });
+            setTimeout(() => {
+                chatContainer.scrollTo({
+                    top: chatContainer.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 100);
         }
 
         document.getElementById('chatContainer').addEventListener('scroll', function() {
@@ -1025,19 +963,16 @@
         function getResponse(userMessage) {
             const msg = userMessage.toLowerCase();
             
-            // Appointment/Schedule trigger
             if (/schedule|appointment|consult|book|meet|visit/i.test(msg)) {
                 setTimeout(() => openContactForm(), 500);
                 return "Excellent! I'd be happy to help you schedule a consultation. Let me open our contact form where you can share your availability and preferences. Our solar experts typically respond within 24 hours!";
             }
             
-            // Contact trigger
             if (/contact|call|email|reach|speak|talk.*someone/i.test(msg)) {
                 window.open('https://docs.google.com/forms/d/e/1FAIpQLSf0bvHj2dJ3mAQo_FX-cdfG4md5pvnybIXOLCs67uYlFbIy7Q/viewform', '_blank');
                 return "Perfect! I've opened our contact form in a new tab. Please fill it out and our solar experts will reach out to you within 24 hours. Is there anything else I can help you with?";
             }
             
-            // Greetings
             if (/(^|\s)(hi|hello|hey|greetings|good morning|good afternoon|good evening)($|\s|!)/i.test(msg)) {
                 const greetings = [
                     "Hello! Great to meet you! I'm SolarBot, your AI solar assistant. I can help you calculate savings, answer questions, and connect you with our expert team. What would you like to know about solar energy?",
@@ -1047,7 +982,6 @@
                 return greetings[Math.floor(Math.random() * greetings.length)];
             }
             
-            // Benefits and "why" questions
             if (/why|benefit|advantage|should i|worth it|good idea|pros/i.test(msg)) {
                 const benefits = [
                     "Solar panels offer incredible benefits! Financially, most homeowners save $20,000-$75,000 over 25 years, with systems paying for themselves in 6-10 years. Your home value increases by 3-4%, and you'll enjoy energy independence. Environmentally, you're directly fighting climate change - a typical system offsets 3-4 tons of CO2 annually! Plus, with current 30% federal tax credits, there's never been a better time. Would you like to schedule a consultation to learn more?",
@@ -1057,7 +991,6 @@
                 return benefits[Math.floor(Math.random() * benefits.length)];
             }
             
-            // Cost questions
             if (/cost|price|expensive|afford|pay|money|dollar|investment|financing/i.test(msg)) {
                 const costs = [
                     "Great question! A typical residential system runs $15,000-$25,000 before incentives. The federal tax credit immediately reduces that by 30%, and many states offer additional rebates. Most homeowners pay $10,500-$17,500 effectively. You can finance with $0 down, and monthly payments are often less than your electric bill. The system pays for itself in 6-10 years! Would you like to discuss financing options with our team?",
@@ -1067,7 +1000,6 @@
                 return costs[Math.floor(Math.random() * costs.length)];
             }
             
-            // How it works
             if (/(how.*work|technology|science|function|panel.*work)/i.test(msg)) {
                 const howItWorks = [
                     "Solar panels use photovoltaic cells made of silicon that absorb sunlight. When photons hit these cells, they knock electrons loose, creating DC electrical current. An inverter converts this to AC power for your home. On sunny days, excess power flows back to the grid, earning you credits! Even on cloudy days, modern panels generate 15-20% of peak power. It's completely automated!",
@@ -1077,7 +1009,6 @@
                 return howItWorks[Math.floor(Math.random() * howItWorks.length)];
             }
             
-            // Environmental questions
             if (/environment|climate|carbon|green|clean|planet|eco|sustainable|pollution/i.test(msg)) {
                 const environmental = [
                     "The environmental impact is phenomenal! Every year, a typical system prevents 3-4 tons of CO2 emissions - equivalent to planting 100 trees annually. Over 25 years, that's 100+ tons of CO2 offset! Solar produces zero air pollution, uses no water, and directly combats climate change. You're reducing demand for fossil fuels and helping create a cleaner planet!",
@@ -1087,7 +1018,6 @@
                 return environmental[Math.floor(Math.random() * environmental.length)];
             }
             
-            // Thank you
             if (/thank|thanks|appreciate/i.test(msg)) {
                 const thanks = [
                     "You're very welcome! I'm always happy to help people discover solar benefits. Is there anything else you'd like to know, or would you like to speak with our team?",
@@ -1097,7 +1027,6 @@
                 return thanks[Math.floor(Math.random() * thanks.length)];
             }
             
-            // Goodbye
             if (/bye|goodbye|see you|gotta go|later/i.test(msg)) {
                 const goodbyes = [
                     "Thanks for chatting! I hope I've helped you understand why solar is such a smart investment. Feel free to return anytime with questions. Have a sunny day! ☀️",
@@ -1107,7 +1036,18 @@
                 return goodbyes[Math.floor(Math.random() * goodbyes.length)];
             }
 
-            // Default
+            if (/fun fact|solar fact|tell me something interesting|interesting fact/i.test(msg)) {
+                return getRandomSolarFact();
+            }
+
+            if (/rainbow|party|celebrate|fun/i.test(msg)) {
+                setTimeout(() => {
+                    document.body.classList.add('easter-egg');
+                    setTimeout(() => document.body.classList.remove('easter-egg'), 5000);
+                }, 500);
+                return "🎉 Party mode activated! Let's celebrate solar energy! 🌈☀️ Did you know solar panels can last 25-30 years? That's a lot of sunshine!";
+            }
+
             const redirects = [
                 "That's interesting! While my expertise is solar energy, I'm happy to chat. Since you're here, have you considered going solar? I can answer questions or connect you with our expert team!",
                 "Good question! I specialize in solar energy, but I can try to help. Speaking of which, would you like to learn about solar benefits? I'm here to answer any questions you have!",
@@ -1118,7 +1058,80 @@
             return redirects[Math.floor(Math.random() * redirects.length)];
         }
 
-        function addMessage(content, isUser) {
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            if (type === 'send') {
+                oscillator.frequency.value = 800;
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } else if (type === 'receive') {
+                oscillator.frequency.value = 600;
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.15);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            btn.textContent = soundEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
+            showToast(soundEnabled ? 'Sound enabled' : 'Sound disabled');
+        }
+
+        function setTypingSpeed(speed) {
+            document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (speed === 'slow') typingSpeed = 2000;
+            else if (speed === 'normal') typingSpeed = 1000;
+            else if (speed === 'fast') typingSpeed = 300;
+            
+            showToast(`Typing speed set to ${speed}`);
+        }
+
+        function showStats() {
+            const totalMessages = chatHistory.length;
+            const userMessages = chatHistory.filter(m => m.role === 'user').length;
+            const botMessages = chatHistory.filter(m => m.role === 'assistant').length;
+            const totalWords = chatHistory.reduce((sum, m) => sum + m.content.split(' ').length, 0);
+            
+            const statsHTML = `
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-number">${totalMessages}</span>
+                        <div class="stat-label">Total Messages</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${userMessages}</span>
+                        <div class="stat-label">Your Messages</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${botMessages}</span>
+                        <div class="stat-label">Bot Responses</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${totalWords}</span>
+                        <div class="stat-label">Total Words</div>
+                    </div>
+                </div>
+            `;
+            
+            addCustomMessage(statsHTML, false);
+        }
+
+        function addCustomMessage(htmlContent, isUser) {
             const chatContainer = document.getElementById('chatContainer');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
@@ -1130,19 +1143,223 @@
             
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content';
-            messageContent.textContent = content;
+            messageContent.innerHTML = htmlContent;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            
+            chatContainer.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.style.opacity = '1';
+            }, 10);
+            
+            scrollToBottom();
+        }
+
+        function updateWordCount() {
+            const input = document.getElementById('userInput');
+            const count = input.value.length;
+            const wordCountEl = document.getElementById('wordCount');
+            wordCountEl.textContent = `${count} / 500`;
+            
+            if (count > 450) {
+                wordCountEl.style.color = '#f44336';
+            } else if (count > 400) {
+                wordCountEl.style.color = '#FFA500';
+            } else {
+                wordCountEl.style.color = 'var(--text-secondary)';
+            }
+            
+            if (count >= 500) {
+                input.value = input.value.substring(0, 500);
+            }
+        }
+
+        function toggleSearch() {
+            const searchContainer = document.getElementById('searchContainer');
+            searchContainer.classList.toggle('active');
+            if (searchContainer.classList.contains('active')) {
+                document.getElementById('searchInput').focus();
+            }
+        }
+
+        function searchMessages() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const resultsEl = document.getElementById('searchResults');
+            
+            if (!query) {
+                resultsEl.textContent = '';
+                return;
+            }
+            
+            const matches = chatHistory.filter(m => 
+                m.content.toLowerCase().includes(query)
+            );
+            
+            resultsEl.textContent = `Found ${matches.length} message${matches.length !== 1 ? 's' : ''}`;
+        }
+
+        function addReaction(messageId, emoji) {
+            if (!reactions[messageId]) reactions[messageId] = {};
+            if (!reactions[messageId][emoji]) reactions[messageId][emoji] = 0;
+            reactions[messageId][emoji]++;
+            
+            const messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+            const reactionBtn = messageEl.querySelector(`[data-emoji="${emoji}"]`);
+            if (reactionBtn) {
+                reactionBtn.classList.add('reacted');
+                const countEl = reactionBtn.querySelector('.reaction-count');
+                if (countEl) countEl.textContent = reactions[messageId][emoji];
+            }
+            
+            playSound('receive');
+        }
+
+        function getRandomSolarFact() {
+            const facts = [
+                "🌟 Solar Fact: The sun provides enough energy to Earth in one hour to power the entire world for a year! We just need to capture it better.",
+                "⚡ Solar Fact: Solar panels can generate electricity even on cloudy days! They produce about 10-25% of their normal output depending on cloud thickness.",
+                "🚀 Solar Fact: The International Space Station has been powered by solar panels since 2000! They generate 84-120 kilowatts of electricity.",
+                "🌍 Solar Fact: Germany, despite its cloudy weather, is one of the world's top solar power producers, proving solar works almost anywhere!",
+                "💰 Solar Fact: The cost of solar panels has dropped by over 90% since 2010, making it one of the cheapest energy sources available today!",
+                "🔋 Solar Fact: A single solar panel can prevent 100 tons of CO2 from being released into the atmosphere over its lifetime!",
+                "🏠 Solar Fact: Homes with solar panels sell 20% faster and for 17% more money on average compared to homes without solar!",
+                "⏰ Solar Fact: It takes about 2-3 years for a solar panel to generate the same amount of energy that was used to manufacture it!"
+            ];
+            return facts[Math.floor(Math.random() * facts.length)];
+        }
+
+        function clearChat() {
+            if (confirm('Are you sure you want to clear the chat history?')) {
+                const chatContainer = document.getElementById('chatContainer');
+                chatContainer.innerHTML = '';
+                chatHistory = [];
+                messageCount = 0;
+                
+                setTimeout(() => {
+                    const welcomeMsg = document.createElement('div');
+                    welcomeMsg.className = 'message bot';
+                    welcomeMsg.style.opacity = '0';
+                    welcomeMsg.innerHTML = `
+                        <div class="avatar">☀️</div>
+                        <div class="message-content">
+                            Hello! I'm SolarBot, your AI-powered solar energy assistant! I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. How can I help you today?
+                        </div>
+                    `;
+                    chatContainer.appendChild(welcomeMsg);
+                    setTimeout(() => welcomeMsg.style.opacity = '1', 10);
+                }, 100);
+                
+                updateSuggestions('');
+            }
+        }
+
+        function showFunFact() {
+            const fact = getRandomSolarFact();
+            addMessage(fact, false);
+        }
+
+        function copyMessage(messageId) {
+            const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+            if (messageElement) {
+                const text = messageElement.querySelector('.message-content').textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Message copied to clipboard!');
+                });
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #4CAF50;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 25px;
+                font-size: 14px;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+
+        function addMessage(content, isUser) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            messageDiv.style.opacity = '0';
+            const currentMessageId = messageIdCounter++;
+            messageDiv.setAttribute('data-message-id', currentMessageId);
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            avatar.textContent = isUser ? '👤' : '☀️';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            
+            const contentText = document.createElement('div');
+            contentText.textContent = content;
+            messageContent.appendChild(contentText);
+            
+            const timestamp = document.createElement('div');
+            timestamp.className = 'message-timestamp';
+            const now = new Date();
+            timestamp.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            messageContent.appendChild(timestamp);
+            
+            if (!isUser) {
+                const reactionsDiv = document.createElement('div');
+                reactionsDiv.className = 'reaction-buttons';
+                reactionsDiv.innerHTML = `
+                    <button class="reaction-btn" data-emoji="👍" onclick="addReaction(${currentMessageId}, '👍')">
+                        👍 <span class="reaction-count">0</span>
+                    </button>
+                    <button class="reaction-btn" data-emoji="❤️" onclick="addReaction(${currentMessageId}, '❤️')">
+                        ❤️ <span class="reaction-count">0</span>
+                    </button>
+                    <button class="reaction-btn" data-emoji="😊" onclick="addReaction(${currentMessageId}, '😊')">
+                        😊 <span class="reaction-count">0</span>
+                    </button>
+                    <button class="reaction-btn" data-emoji="🎉" onclick="addReaction(${currentMessageId}, '🎉')">
+                        🎉 <span class="reaction-count">0</span>
+                    </button>
+                `;
+                messageContent.appendChild(reactionsDiv);
+                
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'message-actions';
+                actionsDiv.innerHTML = `
+                    <button class="action-icon tooltip" onclick="copyMessage(${currentMessageId})" title="Copy message">
+                        📋
+                        <span class="tooltiptext">Copy</span>
+                    </button>
+                `;
+                messageContent.appendChild(actionsDiv);
+            }
             
             if (isUser) {
                 messageDiv.appendChild(messageContent);
                 messageDiv.appendChild(avatar);
+                playSound('send');
             } else {
                 messageDiv.appendChild(avatar);
                 messageDiv.appendChild(messageContent);
+                playSound('receive');
             }
             
             chatContainer.appendChild(messageDiv);
             
-            // Store in history
             chatHistory.push({
                 role: isUser ? 'user' : 'assistant',
                 content: content,
@@ -1157,9 +1374,44 @@
             
             if (!isUser) {
                 updateSuggestions(content.toLowerCase());
+                
+                if (content.toLowerCase().includes('consultation') || content.toLowerCase().includes('appointment')) {
+                    setTimeout(() => addQuickReplies(currentMessageId, [
+                        'Yes, schedule it!',
+                        'Tell me more first',
+                        'What are the costs?'
+                    ]), 500);
+                } else if (content.toLowerCase().includes('cost') || content.toLowerCase().includes('price')) {
+                    setTimeout(() => addQuickReplies(currentMessageId, [
+                        'What about financing?',
+                        'Any tax credits?',
+                        'Schedule consultation'
+                    ]), 500);
+                }
             }
             
             messageCount++;
+        }
+
+        function addQuickReplies(messageId, replies) {
+            const messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+            if (!messageEl) return;
+            
+            const quickReplyDiv = document.createElement('div');
+            quickReplyDiv.className = 'quick-reply-container';
+            
+            replies.forEach(reply => {
+                const btn = document.createElement('button');
+                btn.className = 'quick-reply-btn';
+                btn.textContent = reply;
+                btn.onclick = () => {
+                    document.getElementById('userInput').value = reply;
+                    sendMessage();
+                };
+                quickReplyDiv.appendChild(btn);
+            });
+            
+            messageEl.querySelector('.message-content').appendChild(quickReplyDiv);
         }
 
         function showTypingIndicator() {
@@ -1189,15 +1441,13 @@
 
         function sendMessage() {
             const input = document.getElementById('userInput');
-            const sendBtn = document.getElementById('sendBtn');
             const message = input.value.trim();
             
             if (message === '') return;
             
             addMessage(message, true);
             input.value = '';
-            sendBtn.disabled = true;
-            input.disabled = true;
+            updateWordCount();
             
             showTypingIndicator();
             
@@ -1206,10 +1456,8 @@
                 hideTypingIndicator();
                 addMessage(response, false);
                 
-                sendBtn.disabled = false;
-                input.disabled = false;
                 input.focus();
-            }, 1000 + Math.random() * 500);
+            }, typingSpeed + Math.random() * 500);
         }
 
         function sendSuggestion(text) {
@@ -1223,15 +1471,6 @@
                 sendMessage();
             }
         }
-
-        // Close modals when clicking outside
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('active');
-                }
-            });
-        });
     </script>
 </body>
 </html>
