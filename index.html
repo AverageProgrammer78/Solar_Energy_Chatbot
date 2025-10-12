@@ -53,7 +53,6 @@
             align-items: center;
             padding: 20px;
             transition: background 0.5s ease;
-            pointer-events: auto;
         }
 
         .container {
@@ -99,36 +98,79 @@
             font-size: 14px;
             opacity: 0.9;
             animation: slideDown 0.5s ease 0.1s backwards;
-            margin-bottom: 12px;
+            margin-bottom: 5px;
         }
 
-        .header-buttons {
+        .menu-toggle {
             position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .header-btn {
+            top: 25px;
+            left: 25px;
             background: rgba(255, 255, 255, 0.3);
             border: none;
-            padding: 6px 14px;
-            border-radius: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease 0.2s backwards;
+            color: #2C3E50;
+            z-index: 1001;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+        body.dark-theme .menu-toggle {
+            background: rgba(255, 215, 0, 0.3);
+            color: #FFD700;
+        }
+
+        .menu-dropdown {
+            position: absolute;
+            top: 75px;
+            left: 25px;
+            background: var(--container-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 200px;
+            z-index: 1000;
+            animation: slideDown 0.3s ease;
+        }
+
+        .menu-dropdown.active {
+            display: flex;
+        }
+
+        .menu-item {
+            background: var(--suggestion-bg);
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
             font-weight: 600;
             transition: all 0.3s ease;
             color: var(--text-primary);
-            white-space: nowrap;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .header-btn:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
+        .menu-item:hover {
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+            color: white;
+            transform: translateX(5px);
         }
 
         .theme-toggle {
@@ -171,7 +213,6 @@
             padding: 20px;
             background: var(--chat-bg);
             transition: background 0.3s ease;
-            pointer-events: auto;
             scroll-behavior: smooth;
         }
 
@@ -563,201 +604,114 @@
             flex-direction: column;
         }
 
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 10px;
+        .calculator-container {
+            background: var(--message-bot-bg);
+            border: 2px solid var(--message-bot-border);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
         }
 
-        .quick-action-btn {
-            padding: 8px 16px;
-            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-            color: #2C3E50;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
+        .calc-input-group {
+            margin-bottom: 15px;
+        }
+
+        .calc-input-group label {
+            display: block;
             font-size: 13px;
             font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .quick-action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
-        }
-
-        .image-preview {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .file-upload-container {
-            display: none;
-        }
-
-        .typing-animation {
-            display: inline-block;
-        }
-
-        .typing-animation::after {
-            content: '|';
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        .fun-fact-box {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 10px;
-            font-size: 14px;
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-        }
-
-        .fun-fact-box strong {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-
-        .message-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .message:hover .message-actions {
-            opacity: 1;
-        }
-
-        .action-icon {
-            background: var(--suggestion-bg);
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .action-icon:hover {
-            background: #FFA500;
-            transform: scale(1.1);
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            background-color: #555;
-            color: white;
-            text-align: center;
-            padding: 5px 10px;
-            border-radius: 6px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -40px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .search-highlight {
-            background-color: yellow;
-            color: black;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .easter-egg {
-            animation: rainbow 3s linear infinite;
-        }
-
-        @keyframes rainbow {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
-
-        .typing-speed-control {
-            position: absolute;
-            top: 70px;
-            right: 25px;
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-
-        .speed-btn {
-            background: rgba(255, 255, 255, 0.3);
-            border: none;
-            padding: 4px 8px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            margin-bottom: 5px;
             color: var(--text-primary);
         }
 
-        .speed-btn.active {
-            background: rgba(255, 255, 255, 0.6);
-            transform: scale(1.1);
+        .calc-input-group input, .calc-input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 14px;
+            background: var(--input-bg);
+            color: var(--text-primary);
         }
 
-        .speed-btn:hover {
-            background: rgba(255, 255, 255, 0.5);
+        .calc-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
         }
 
-        .message-timestamp {
-            font-size: 10px;
-            opacity: 0.6;
-            margin-top: 4px;
-            font-style: italic;
+        .calc-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .calc-results {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--suggestion-bg);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .calc-results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: var(--container-bg);
+            border-radius: 8px;
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+        }
+
+        .result-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4CAF50;
         }
 
         .sound-toggle {
             position: absolute;
-            top: 70px;
-            left: 25px;
+            top: 25px;
+            left: 75px;
             background: rgba(255, 255, 255, 0.3);
             border: none;
-            padding: 8px 15px;
-            border-radius: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.3s ease;
-            color: var(--text-primary);
+            animation: fadeIn 0.5s ease 0.2s backwards;
+            color: #2C3E50;
         }
 
         .sound-toggle:hover {
             background: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
+            transform: scale(1.1);
+        }
+
+        body.dark-theme .sound-toggle {
+            background: rgba(255, 215, 0, 0.3);
+            color: #FFD700;
         }
 
         .stats-container {
@@ -800,126 +754,314 @@
             opacity: 0.7;
         }
 
-        .reaction-buttons {
-            display: flex;
-            gap: 5px;
-            margin-top: 8px;
-            flex-wrap: wrap;
+        .message-timestamp {
+            font-size: 10px;
+            opacity: 0.6;
+            margin-top: 4px;
+            font-style: italic;
         }
 
-        .reaction-btn {
+        .message-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .action-icon {
             background: var(--suggestion-bg);
-            border: 1px solid var(--border-color);
-            padding: 4px 10px;
-            border-radius: 12px;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
+            transition: all 0.3s ease;
         }
 
-        .reaction-btn:hover {
-            transform: scale(1.2);
-            background: #FFA500;
-        }
-
-        .reaction-btn.reacted {
+        .action-icon:hover {
             background: #FFA500;
             transform: scale(1.1);
         }
 
-        .reaction-count {
-            font-size: 10px;
-            font-weight: bold;
-        }
-
-        .quick-reply-container {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-top: 8px;
-        }
-
-        .quick-reply-btn {
-            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-            border: none;
-            padding: 6px 12px;
+        .comparison-table {
+            background: var(--message-bot-bg);
+            border: 2px solid var(--message-bot-border);
             border-radius: 15px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            color: #2C3E50;
-            transition: all 0.3s ease;
-            white-space: nowrap;
+            padding: 20px;
+            margin: 10px 0;
+            overflow-x: auto;
         }
 
-        .quick-reply-btn:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
-        }
-
-        .search-container {
-            padding: 10px 20px;
-            background: var(--container-bg);
-            border-bottom: 1px solid var(--border-color);
-            display: none;
-        }
-
-        .search-container.active {
-            display: block;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 2px solid var(--border-color);
-            border-radius: 15px;
-            font-size: 13px;
-            background: var(--input-bg);
+        .comparison-table h3 {
             color: var(--text-primary);
+            margin-bottom: 15px;
+            text-align: center;
         }
 
-        .search-results {
-            font-size: 11px;
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .comparison-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        .comparison-table tr:hover {
+            background: var(--suggestion-bg);
+        }
+
+        .faq-container {
+            background: var(--message-bot-bg);
+            border: 2px solid var(--message-bot-border);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+
+        .faq-container h3 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+
+        .faq-item {
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .faq-question {
+            background: var(--suggestion-bg);
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover {
+            background: #FFA500;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .faq-answer {
+            padding: 12px;
             color: var(--text-secondary);
-            margin-top: 5px;
+            display: none;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .faq-answer.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .progress-tracker {
+            background: var(--message-bot-bg);
+            border: 2px solid var(--message-bot-border);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+
+        .progress-tracker h3 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .progress-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 50px;
+            width: 2px;
+            height: 100%;
+            background: var(--border-color);
+        }
+
+        .progress-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--suggestion-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--text-primary);
+            flex-shrink: 0;
+            margin-right: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-number.completed {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .progress-info h4 {
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .progress-info p {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .testimonial-container {
+            background: var(--message-bot-bg);
+            border: 2px solid var(--message-bot-border);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+
+        .testimonial-item {
+            background: var(--suggestion-bg);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #FFA500;
+        }
+
+        .testimonial-text {
+            color: var(--text-primary);
+            font-style: italic;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: #FFA500;
+            font-size: 14px;
+        }
+
+        .testimonial-rating {
+            color: #FFD700;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .typing-indicator-text {
+            display: none;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .typing-indicator-text.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                height: 95vh;
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 20px 15px 20px 15px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .header p {
+                font-size: 12px;
+            }
+
+            .theme-toggle, .menu-toggle, .sound-toggle {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+
+            .sound-toggle {
+                left: 70px;
+            }
+
+            .menu-dropdown {
+                left: 10px;
+                min-width: 180px;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .suggestion-btn {
+                min-width: 130px;
+                padding: 12px 20px;
+                font-size: 13px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="header-buttons">
-                <button class="header-btn" onclick="openContactForm()">📧 Contact</button>
-                <button class="header-btn" onclick="clearChat()">🗑️ Clear</button>
-                <button class="header-btn" onclick="showFunFact()">💡 Fun Fact</button>
-                <button class="header-btn" onclick="showStats()">📊 Stats</button>
-                <button class="header-btn" onclick="toggleSearch()">🔍 Search</button>
+            <button class="menu-toggle" onclick="toggleMenu()" id="menuToggle">☰</button>
+            <div class="menu-dropdown" id="menuDropdown">
+                <button class="menu-item" onclick="openContactForm(); closeMenu();">📧 Contact Us</button>
+                <button class="menu-item" onclick="showCalculator(); closeMenu();">🧮 Calculator</button>
+                <button class="menu-item" onclick="exportChat(); closeMenu();">💾 Export Chat</button>
+                <button class="menu-item" onclick="emailTranscript(); closeMenu();">📨 Email Transcript</button>
+                <button class="menu-item" onclick="showStats(); closeMenu();">📊 Statistics</button>
+                <button class="menu-item" onclick="clearChat(); closeMenu();">🗑️ Clear Chat</button>
             </div>
-            <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊 Sound ON</button>
-            <div class="typing-speed-control">
-                <span style="font-size: 10px; opacity: 0.8;">Speed:</span>
-                <button class="speed-btn" onclick="setTypingSpeed('slow')">🐢</button>
-                <button class="speed-btn active" onclick="setTypingSpeed('normal')">⚡</button>
-                <button class="speed-btn" onclick="setTypingSpeed('fast')">🚀</button>
-            </div>
+            <button class="sound-toggle" id="soundToggle" onclick="toggleSound()" title="Toggle sound">🔊</button>
             <h1>☀️ SolarBot</h1>
             <p>Your AI-powered solar energy assistant</p>
             <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
         </div>
 
         <div class="chat-wrapper">
-            <div class="search-container" id="searchContainer">
-                <input type="text" class="search-input" id="searchInput" placeholder="Search messages..." oninput="searchMessages()">
-                <div class="search-results" id="searchResults"></div>
-            </div>
             <div class="chat-container" id="chatContainer">
                 <div class="message bot" style="animation-delay: 0.1s">
                     <div class="avatar">☀️</div>
                     <div class="message-content">
-                        Hello! I'm SolarBot, your AI-powered solar energy assistant! I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. How can I help you today?
+                        Hello! I'm SolarBot, your AI-powered solar energy assistant! 🌟 I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. Try asking me about costs, benefits, or use the calculator button above! How can I help you today?
                     </div>
                 </div>
             </div>
@@ -930,7 +1072,7 @@
             <button class="suggestion-btn" onclick="sendSuggestion('Why should I get solar panels?')">💡 Why solar?</button>
             <button class="suggestion-btn" onclick="sendSuggestion('How much do solar panels cost?')">💰 Costs</button>
             <button class="suggestion-btn" onclick="sendSuggestion('Schedule a consultation')">📅 Book appointment</button>
-            <button class="suggestion-btn" onclick="sendSuggestion('How do solar panels work?')">⚡ How they work</button>
+            <button class="suggestion-btn" onclick="showCalculator()">🧮 Calculate savings</button>
         </div>
 
         <div class="input-container">
@@ -938,18 +1080,6 @@
             <input type="text" id="userInput" placeholder="Ask me about solar power..." onkeypress="handleKeyPress(event)" oninput="updateWordCount()">
             <div class="word-count" id="wordCount">0 / 500</div>
             <button id="sendBtn" onclick="sendMessage()">Send</button>
-        </div>
-    </div>
-
-    <!-- Contact Form Modal -->
-    <div class="modal" id="contactModal">
-        <div class="modal-content" style="max-width: 650px;">
-            <button class="close-modal" onclick="closeContactForm()">×</button>
-            <h2>Get in Touch</h2>
-            <p>Interested in solar? Fill out this form and we'll contact you!</p>
-            <div id="formContent">
-                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf0bvHj2dJ3mAQo_FX-cdfG4md5pvnybIXOLCs67uYlFbIy7Q/viewform?embedded=true" width="100%" height="800" frameborder="0" marginheight="0" marginwidth="0" style="border-radius: 10px;">Loading…</iframe>
-            </div>
         </div>
     </div>
 
@@ -1002,12 +1132,39 @@
                 body.classList.add('dark-theme');
                 toggle.textContent = '☀️';
                 currentTheme = 'dark';
+                showToast('Dark theme activated 🌙');
             } else {
                 body.classList.remove('dark-theme');
                 toggle.textContent = '🌙';
                 currentTheme = 'light';
+                showToast('Light theme activated ☀️');
             }
         }
+
+        function toggleMenu() {
+            const menu = document.getElementById('menuDropdown');
+            const toggle = document.getElementById('menuToggle');
+            menu.classList.toggle('active');
+            toggle.textContent = menu.classList.contains('active') ? '✕' : '☰';
+        }
+
+        function closeMenu() {
+            const menu = document.getElementById('menuDropdown');
+            const toggle = document.getElementById('menuToggle');
+            menu.classList.remove('active');
+            toggle.textContent = '☰';
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('menuDropdown');
+            const toggle = document.getElementById('menuToggle');
+            
+            if (menu && toggle && !menu.contains(event.target) && !toggle.contains(event.target)) {
+                menu.classList.remove('active');
+                toggle.textContent = '☰';
+            }
+        });
 
         function toggleVoice() {
             if (isListening) {
@@ -1023,6 +1180,7 @@
                     isListening = true;
                     document.getElementById('voiceBtn').classList.add('listening');
                     recognition.start();
+                    showToast('Listening... 🎤');
                 } catch (error) {
                     console.error('Voice recognition error:', error);
                     stopVoice();
@@ -1050,8 +1208,162 @@
             }, 300);
         }
 
-        function closeContactForm() {
-            document.getElementById('contactModal').classList.remove('active');
+        function showCalculator() {
+            const calculatorHTML = `
+                <div class="calculator-container">
+                    <h3 style="margin-bottom: 15px; color: var(--text-primary);">☀️ Solar Savings Calculator</h3>
+                    <div class="calc-input-group">
+                        <label>Monthly Electric Bill ($)</label>
+                        <input type="number" id="electricBill" placeholder="e.g., 150" value="150">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>Average Sunlight Hours/Day</label>
+                        <input type="number" id="sunHours" placeholder="e.g., 5" value="5" step="0.5">
+                    </div>
+                    <div class="calc-input-group">
+                        <label>System Size (kW)</label>
+                        <select id="systemSize">
+                            <option value="5">5 kW (Small - $15,000)</option>
+                            <option value="7" selected>7 kW (Medium - $21,000)</option>
+                            <option value="10">10 kW (Large - $30,000)</option>
+                        </select>
+                    </div>
+                    <div class="calc-input-group">
+                        <label>State</label>
+                        <select id="state">
+                            <option value="0.1">California (High Incentives)</option>
+                            <option value="0.08" selected>Texas (Medium Incentives)</option>
+                            <option value="0.05">Florida (Standard Incentives)</option>
+                            <option value="0.03">Other States</option>
+                        </select>
+                    </div>
+                    <button class="calc-button" onclick="calculateSavings()">Calculate My Savings 🚀</button>
+                    <div class="calc-results" id="calcResults"></div>
+                </div>
+            `;
+            addCustomMessage(calculatorHTML, false);
+            showToast('Calculator loaded! Fill in your details 📊');
+        }
+
+        function calculateSavings() {
+            const electricBill = parseFloat(document.getElementById('electricBill').value) || 150;
+            const sunHours = parseFloat(document.getElementById('sunHours').value) || 5;
+            const systemSize = parseFloat(document.getElementById('systemSize').value) || 7;
+            const stateIncentive = parseFloat(document.getElementById('state').value) || 0.08;
+            
+            // Calculations
+            const systemCost = systemSize * 3000;
+            const federalTaxCredit = systemCost * 0.30;
+            const stateIncentiveAmount = systemCost * stateIncentive;
+            const netCost = systemCost - federalTaxCredit - stateIncentiveAmount;
+            
+            const annualProduction = systemSize * sunHours * 365 * 0.75;
+            const annualSavings = electricBill * 12;
+            const paybackYears = (netCost / annualSavings).toFixed(1);
+            const lifetime25Savings = (annualSavings * 25 - netCost).toFixed(0);
+            const monthlyPayment = (netCost / 180).toFixed(0); // 15-year loan
+            
+            const resultsHTML = `
+                <div class="result-item">
+                    <div class="result-label">System Cost (Before Incentives)</div>
+                    <div class="result-value">${systemCost.toLocaleString()}</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Federal Tax Credit (30%)</div>
+                    <div class="result-value">-${federalTaxCredit.toLocaleString()}</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">State Incentives</div>
+                    <div class="result-value">-${stateIncentiveAmount.toLocaleString()}</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Net Cost</div>
+                    <div class="result-value">${netCost.toLocaleString()}</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Annual Savings</div>
+                    <div class="result-value">${annualSavings.toLocaleString()}</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Monthly Loan Payment (15yr)</div>
+                    <div class="result-value">${monthlyPayment}/mo</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Payback Period</div>
+                    <div class="result-value">${paybackYears} years</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">25-Year Savings</div>
+                    <div class="result-value" style="color: #4CAF50; font-size: 24px;">${lifetime25Savings.toLocaleString()} 🎉</div>
+                </div>
+            `;
+            
+            const resultsDiv = document.getElementById('calcResults');
+            resultsDiv.innerHTML = resultsHTML;
+            resultsDiv.classList.add('show');
+            playSound('receive');
+            showToast('Calculations complete! 💰');
+            
+            setTimeout(() => {
+                scrollToBottom();
+            }, 100);
+        }
+
+        function exportChat() {
+            if (chatHistory.length === 0) {
+                showToast('No messages to export! 📭');
+                return;
+            }
+            
+            let exportText = '=== SolarBot Chat Transcript ===\n';
+            exportText += `Date: ${new Date().toLocaleString()}\n`;
+            exportText += `Total Messages: ${chatHistory.length}\n`;
+            exportText += '=================================\n\n';
+            
+            chatHistory.forEach((msg, index) => {
+                const role = msg.role === 'user' ? 'You' : 'SolarBot';
+                const time = new Date(msg.timestamp).toLocaleTimeString();
+                exportText += `[${time}] ${role}:\n${msg.content}\n\n`;
+            });
+            
+            exportText += '=================================\n';
+            exportText += 'Generated by SolarBot - Your Solar Energy Assistant\n';
+            exportText += 'Visit us for more information about solar energy!\n';
+            
+            const blob = new Blob([exportText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `SolarBot_Chat_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Chat exported successfully! 📥');
+            playSound('receive');
+        }
+
+        function emailTranscript() {
+            if (chatHistory.length === 0) {
+                showToast('No messages to email! 📭');
+                return;
+            }
+            
+            let emailBody = 'SolarBot Chat Transcript%0D%0A';
+            emailBody += `Date: ${new Date().toLocaleString()}%0D%0A`;
+            emailBody += '=================================%0D%0A%0D%0A';
+            
+            chatHistory.forEach((msg, index) => {
+                const role = msg.role === 'user' ? 'You' : 'SolarBot';
+                emailBody += `${role}: ${encodeURIComponent(msg.content)}%0D%0A%0D%0A`;
+            });
+            
+            const subject = 'My SolarBot Conversation';
+            const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
+            
+            window.location.href = mailtoLink;
+            showToast('Opening email client... 📧');
         }
 
         function updateSuggestions(context) {
@@ -1061,30 +1373,30 @@
             if (context.includes('cost') || context.includes('price') || context.includes('afford')) {
                 suggestions = [
                     { display: '💳 Financing options', query: 'How can I afford solar panels?' },
-                    { display: '🎁 Tax credits', query: 'What are the costs and incentives?' },
+                    { display: '🧮 Calculate savings', action: () => showCalculator() },
                     { display: '⏱️ Payback period', query: 'How long until solar pays for itself?' },
                     { display: '📧 Contact sales', query: 'I want to speak with someone' }
                 ];
             } else if (context.includes('schedule') || context.includes('appointment') || context.includes('consult')) {
                 suggestions = [
-                    { display: '📧 Fill contact form', query: 'I want to be contacted' },
-                    { display: '📞 Call me back', query: 'Can someone call me?' },
+                    { display: '📧 Fill contact form', action: () => openContactForm() },
                     { display: '💬 More questions', query: 'I have more questions first' },
-                    { display: '💰 Costs', query: 'How much do solar panels cost?' }
+                    { display: '💰 Costs', query: 'How much do solar panels cost?' },
+                    { display: '🧮 Calculator', action: () => showCalculator() }
                 ];
-            } else if (context.includes('install') || context.includes('process')) {
+            } else if (context.includes('calculator') || context.includes('savings')) {
                 suggestions = [
-                    { display: '📋 Installation steps', query: 'How long does installation take?' },
-                    { display: '🏠 Roof requirements', query: 'Will solar work on my roof?' },
-                    { display: '⏰ Timeline', query: 'What is the installation timeline?' },
-                    { display: '🔧 Maintenance', query: 'How much maintenance do solar panels need?' }
+                    { display: '📅 Book appointment', query: 'Schedule a consultation' },
+                    { display: '💡 Why solar?', query: 'Why should I get solar panels?' },
+                    { display: '💰 Financing', query: 'What financing options are available?' },
+                    { display: '📧 Contact', action: () => openContactForm() }
                 ];
             } else {
                 suggestions = [
                     { display: '💡 Why solar?', query: 'Why should I get solar panels?' },
                     { display: '💰 Costs', query: 'How much do solar panels cost?' },
                     { display: '📅 Book appointment', query: 'Schedule a consultation' },
-                    { display: '⚡ How they work', query: 'How do solar panels work?' }
+                    { display: '🧮 Calculate savings', action: () => showCalculator() }
                 ];
             }
 
@@ -1093,7 +1405,13 @@
                 const btn = document.createElement('button');
                 btn.className = 'suggestion-btn';
                 btn.textContent = item.display;
-                btn.onclick = () => sendSuggestion(item.query);
+                
+                if (item.action) {
+                    btn.onclick = item.action;
+                } else {
+                    btn.onclick = () => sendSuggestion(item.query);
+                }
+                
                 btn.style.animationDelay = `${index * 0.1}s`;
                 suggestionsContainer.appendChild(btn);
             });
@@ -1123,6 +1441,11 @@
         function getResponse(userMessage) {
             const msg = userMessage.toLowerCase();
             
+            if (/calculat|savings|estimate|how much.*save/i.test(msg)) {
+                setTimeout(() => showCalculator(), 500);
+                return "Great! Let me pull up the solar savings calculator for you. Just fill in your details and I'll calculate your potential savings, payback period, and 25-year benefits! 🧮";
+            }
+            
             if (/schedule|appointment|consult|book|meet|visit/i.test(msg)) {
                 setTimeout(() => openContactForm(), 500);
                 return "Excellent! I'd be happy to help you schedule a consultation. Let me open our contact form where you can share your availability and preferences. Our solar experts typically respond within 24 hours!";
@@ -1144,18 +1467,18 @@
             
             if (/why|benefit|advantage|should i|worth it|good idea|pros/i.test(msg)) {
                 const benefits = [
-                    "Solar panels offer incredible benefits! Financially, most homeowners save $20,000-$75,000 over 25 years, with systems paying for themselves in 6-10 years. Your home value increases by 3-4%, and you'll enjoy energy independence. Environmentally, you're directly fighting climate change - a typical system offsets 3-4 tons of CO2 annually! Plus, with current 30% federal tax credits, there's never been a better time. Would you like to schedule a consultation to learn more?",
-                    "Great question! The advantages are substantial: dramatically reduced electricity bills, protection from rising energy costs, increased property value, and real environmental impact. Most systems pay for themselves in 6-10 years through savings. With incentives and financing options available, going solar is more accessible than ever! Would you like to speak with our team?",
-                    "There are so many reasons to go solar! You'll save thousands over the system's 25+ year lifespan, lock in low energy costs, boost your home's value, and help fight climate change. Plus, solar technology is proven and reliable. With 30% tax credits available, it's a smart financial decision! Want to learn more about how it could work for your home?"
+                    "Solar panels offer incredible benefits! Financially, most homeowners save $20,000-$75,000 over 25 years, with systems paying for themselves in 6-10 years. Your home value increases by 3-4%, and you'll enjoy energy independence. Environmentally, you're directly fighting climate change - a typical system offsets 3-4 tons of CO2 annually! Plus, with current 30% federal tax credits, there's never been a better time. Want to use our calculator to see your specific savings?",
+                    "Great question! The advantages are substantial: dramatically reduced electricity bills, protection from rising energy costs, increased property value, and real environmental impact. Most systems pay for themselves in 6-10 years through savings. With incentives and financing options available, going solar is more accessible than ever! Want to calculate your potential savings?",
+                    "There are so many reasons to go solar! You'll save thousands over the system's 25+ year lifespan, lock in low energy costs, boost your home's value, and help fight climate change. Plus, solar technology is proven and reliable. With 30% tax credits available, it's a smart financial decision! Want to see the numbers for your home?"
                 ];
                 return benefits[Math.floor(Math.random() * benefits.length)];
             }
             
             if (/cost|price|expensive|afford|pay|money|dollar|investment|financing/i.test(msg)) {
                 const costs = [
-                    "Great question! A typical residential system runs $15,000-$25,000 before incentives. The federal tax credit immediately reduces that by 30%, and many states offer additional rebates. Most homeowners pay $10,500-$17,500 effectively. You can finance with $0 down, and monthly payments are often less than your electric bill. The system pays for itself in 6-10 years! Would you like to discuss financing options with our team?",
-                    "Solar costs have dropped dramatically! The average system costs around $18,000 before incentives. With the 30% federal tax credit, that's about $12,600. Financing options make solar accessible with $0 down. You're trading your utility payment for a solar payment that leads to ownership. After 6-10 years, you have free electricity! Want to learn more?",
-                    "Investing in solar is more affordable than ever! While systems cost $15,000-$25,000 upfront, the 30% federal tax credit plus state incentives can cut that significantly. Most people finance, paying less monthly than their old electric bill. Over 25-30 years, you'll save $40,000-$100,000! Interested in exploring your options?"
+                    "Great question! A typical residential system runs $15,000-$25,000 before incentives. The federal tax credit immediately reduces that by 30%, and many states offer additional rebates. Most homeowners pay $10,500-$17,500 effectively. You can finance with $0 down, and monthly payments are often less than your electric bill. The system pays for itself in 6-10 years! Want to use our calculator for exact numbers?",
+                    "Solar costs have dropped dramatically! The average system costs around $18,000 before incentives. With the 30% federal tax credit, that's about $12,600. Financing options make solar accessible with $0 down. You're trading your utility payment for a solar payment that leads to ownership. After 6-10 years, you have free electricity! Want to calculate your specific costs?",
+                    "Investing in solar is more affordable than ever! While systems cost $15,000-$25,000 upfront, the 30% federal tax credit plus state incentives can cut that significantly. Most people finance, paying less monthly than their old electric bill. Over 25-30 years, you'll save $40,000-$100,000! Try our calculator to see your savings!"
                 ];
                 return costs[Math.floor(Math.random() * costs.length)];
             }
@@ -1180,9 +1503,9 @@
             
             if (/thank|thanks|appreciate/i.test(msg)) {
                 const thanks = [
-                    "You're very welcome! I'm always happy to help people discover solar benefits. Is there anything else you'd like to know, or would you like to speak with our team?",
-                    "My pleasure! Solar energy is my passion. Feel free to ask more questions or schedule a consultation anytime!",
-                    "Happy to help! If you'd like more detailed information or want to speak with our team, just let me know!"
+                    "You're very welcome! I'm always happy to help people discover solar benefits. Is there anything else you'd like to know, or would you like to use our calculator or speak with our team?",
+                    "My pleasure! Solar energy is my passion. Feel free to ask more questions, try the calculator, or schedule a consultation anytime!",
+                    "Happy to help! If you'd like to calculate your savings or speak with our team, just let me know!"
                 ];
                 return thanks[Math.floor(Math.random() * thanks.length)];
             }
@@ -1190,29 +1513,25 @@
             if (/bye|goodbye|see you|gotta go|later/i.test(msg)) {
                 const goodbyes = [
                     "Thanks for chatting! I hope I've helped you understand why solar is such a smart investment. Feel free to return anytime with questions. Have a sunny day! ☀️",
-                    "It was great talking with you! Consider calculating your savings or scheduling a consultation. Come back anytime. Take care! ☀️",
+                    "It was great talking with you! Consider using our calculator or scheduling a consultation. Come back anytime. Take care! ☀️",
                     "Goodbye! Remember, our calculator and team are here whenever you're ready. Stay bright! ☀️"
                 ];
                 return goodbyes[Math.floor(Math.random() * goodbyes.length)];
             }
 
-            if (/fun fact|solar fact|tell me something interesting|interesting fact/i.test(msg)) {
-                return getRandomSolarFact();
+            if (/financing|loan|payment plan|monthly payment/i.test(msg)) {
+                return "Financing solar is easier than ever! Most providers offer $0 down with monthly payments often lower than your current electric bill. Options include solar loans (own the system, get tax credits), solar leases (no upfront cost, fixed monthly rate), and power purchase agreements (pay only for energy produced). Many homeowners qualify instantly, and the 30% federal tax credit can be applied to reduce your loan amount. Want to use our calculator to see estimated monthly payments?";
             }
 
-            if (/rainbow|party|celebrate|fun/i.test(msg)) {
-                setTimeout(() => {
-                    document.body.classList.add('easter-egg');
-                    setTimeout(() => document.body.classList.remove('easter-egg'), 5000);
-                }, 500);
-                return "🎉 Party mode activated! Let's celebrate solar energy! 🌈☀️ Did you know solar panels can last 25-30 years? That's a lot of sunshine!";
+            if (/roof|installation|install/i.test(msg)) {
+                return "Most roofs are perfect for solar! Ideal conditions include south-facing with minimal shade, but east and west-facing roofs work great too. Installation typically takes 1-3 days after permits are approved. The entire process from consultation to activation averages 2-3 months. Modern mounting systems don't damage your roof - they're designed to protect it! Solar panels can even extend your roof's life by shielding it from weather. Want to schedule a free roof assessment?";
             }
 
             const redirects = [
-                "That's interesting! While my expertise is solar energy, I'm happy to chat. Since you're here, have you considered going solar? I can answer questions or connect you with our expert team!",
-                "Good question! I specialize in solar energy, but I can try to help. Speaking of which, would you like to learn about solar benefits? I'm here to answer any questions you have!",
-                "Thanks for asking! I focus mainly on solar energy topics. By the way, have you thought about whether solar might work for your home? I can help you explore the options!",
-                "I appreciate the question! While solar energy is my specialty, I'm here for friendly conversation too. Would you like to learn about solar savings, schedule a consultation, or explore what solar could do for you?"
+                "That's interesting! While my expertise is solar energy, I'm happy to chat. Since you're here, have you considered using our calculator to see potential savings? I can also answer questions or connect you with our expert team!",
+                "Good question! I specialize in solar energy, but I can try to help. Speaking of which, would you like to learn about solar benefits? Try our calculator or ask me anything!",
+                "Thanks for asking! I focus mainly on solar energy topics. By the way, have you checked out our savings calculator? I can help you explore what solar could do for you!",
+                "I appreciate the question! While solar energy is my specialty, I'm here for friendly conversation too. Would you like to calculate potential savings, schedule a consultation, or explore what solar could do for you?"
             ];
 
             return redirects[Math.floor(Math.random() * redirects.length)];
@@ -1246,19 +1565,9 @@
         function toggleSound() {
             soundEnabled = !soundEnabled;
             const btn = document.getElementById('soundToggle');
-            btn.textContent = soundEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
-            showToast(soundEnabled ? 'Sound enabled' : 'Sound disabled');
-        }
-
-        function setTypingSpeed(speed) {
-            document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            if (speed === 'slow') typingSpeed = 2000;
-            else if (speed === 'normal') typingSpeed = 1000;
-            else if (speed === 'fast') typingSpeed = 300;
-            
-            showToast(`Typing speed set to ${speed}`);
+            btn.textContent = soundEnabled ? '🔊' : '🔇';
+            btn.title = soundEnabled ? 'Sound ON' : 'Sound OFF';
+            showToast(soundEnabled ? 'Sound enabled 🔊' : 'Sound disabled 🔇');
         }
 
         function showStats() {
@@ -1266,6 +1575,7 @@
             const userMessages = chatHistory.filter(m => m.role === 'user').length;
             const botMessages = chatHistory.filter(m => m.role === 'assistant').length;
             const totalWords = chatHistory.reduce((sum, m) => sum + m.content.split(' ').length, 0);
+            const avgWordsPerMsg = totalMessages > 0 ? Math.round(totalWords / totalMessages) : 0;
             
             const statsHTML = `
                 <div class="stats-container">
@@ -1286,9 +1596,13 @@
                         <div class="stat-label">Total Words</div>
                     </div>
                 </div>
+                <p style="text-align: center; margin-top: 10px; font-size: 13px; color: var(--text-secondary);">
+                    Average ${avgWordsPerMsg} words per message
+                </p>
             `;
             
             addCustomMessage(statsHTML, false);
+            showToast('Stats loaded! 📊');
         }
 
         function addCustomMessage(htmlContent, isUser) {
@@ -1336,43 +1650,6 @@
             }
         }
 
-        function toggleSearch() {
-            const searchContainer = document.getElementById('searchContainer');
-            searchContainer.classList.toggle('active');
-            if (searchContainer.classList.contains('active')) {
-                document.getElementById('searchInput').focus();
-            }
-        }
-
-        function searchMessages() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const resultsEl = document.getElementById('searchResults');
-            
-            if (!query) {
-                resultsEl.textContent = '';
-                document.querySelectorAll('.search-highlight').forEach(el => {
-                    el.outerHTML = el.textContent;
-                });
-                return;
-            }
-            
-            const matches = chatHistory.filter(m => 
-                m.content.toLowerCase().includes(query)
-            );
-            
-            resultsEl.textContent = `Found ${matches.length} message${matches.length !== 1 ? 's' : ''}`;
-            
-            // Highlight matches
-            document.querySelectorAll('.message-content').forEach(el => {
-                const text = el.textContent;
-                if (text.toLowerCase().includes(query)) {
-                    const regex = new RegExp(`(${query})`, 'gi');
-                    const highlighted = text.replace(regex, '<span class="search-highlight">$1</span>');
-                    el.innerHTML = highlighted;
-                }
-            });
-        }
-
         function addReaction(messageId, emoji) {
             if (!reactions[messageId]) reactions[messageId] = {};
             if (!reactions[messageId][emoji]) reactions[messageId][emoji] = 0;
@@ -1389,20 +1666,6 @@
             playSound('receive');
         }
 
-        function getRandomSolarFact() {
-            const facts = [
-                "🌟 Solar Fact: The sun provides enough energy to Earth in one hour to power the entire world for a year! We just need to capture it better.",
-                "⚡ Solar Fact: Solar panels can generate electricity even on cloudy days! They produce about 10-25% of their normal output depending on cloud thickness.",
-                "🚀 Solar Fact: The International Space Station has been powered by solar panels since 2000! They generate 84-120 kilowatts of electricity.",
-                "🌍 Solar Fact: Germany, despite its cloudy weather, is one of the world's top solar power producers, proving solar works almost anywhere!",
-                "💰 Solar Fact: The cost of solar panels has dropped by over 90% since 2010, making it one of the cheapest energy sources available today!",
-                "🔋 Solar Fact: A single solar panel can prevent 100 tons of CO2 from being released into the atmosphere over its lifetime!",
-                "🏠 Solar Fact: Homes with solar panels sell 20% faster and for 17% more money on average compared to homes without solar!",
-                "⏰ Solar Fact: It takes about 2-3 years for a solar panel to generate the same amount of energy that was used to manufacture it!"
-            ];
-            return facts[Math.floor(Math.random() * facts.length)];
-        }
-
         function clearChat() {
             if (confirm('Are you sure you want to clear the chat history?')) {
                 const chatContainer = document.getElementById('chatContainer');
@@ -1410,7 +1673,6 @@
                 chatHistory = [];
                 messageCount = 0;
                 
-                // Add welcome message back
                 setTimeout(() => {
                     const welcomeMsg = document.createElement('div');
                     welcomeMsg.className = 'message bot';
@@ -1418,7 +1680,7 @@
                     welcomeMsg.innerHTML = `
                         <div class="avatar">☀️</div>
                         <div class="message-content">
-                            Hello! I'm SolarBot, your AI-powered solar energy assistant! I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. How can I help you today?
+                            Hello! I'm SolarBot, your AI-powered solar energy assistant! 🌟 I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. Try asking me about costs, benefits, or use the calculator button above! How can I help you today?
                         </div>
                     `;
                     chatContainer.appendChild(welcomeMsg);
@@ -1426,12 +1688,8 @@
                 }, 100);
                 
                 updateSuggestions('');
+                showToast('Chat cleared! 🗑️');
             }
-        }
-
-        function showFunFact() {
-            const fact = getRandomSolarFact();
-            addMessage(fact, false);
         }
 
         function copyMessage(messageId) {
@@ -1439,7 +1697,7 @@
             if (messageElement) {
                 const text = messageElement.querySelector('.message-content').textContent;
                 navigator.clipboard.writeText(text).then(() => {
-                    showToast('Message copied to clipboard!');
+                    showToast('Message copied! 📋');
                 });
             }
         }
@@ -1464,7 +1722,7 @@
             document.body.appendChild(toast);
             
             setTimeout(() => {
-                toast.style.animation = 'fadeOut 0.3s ease';
+                toast.style.opacity = '0';
                 setTimeout(() => toast.remove(), 300);
             }, 2000);
         }
@@ -1484,19 +1742,16 @@
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content';
             
-            // Add main content
             const contentText = document.createElement('div');
             contentText.textContent = content;
             messageContent.appendChild(contentText);
             
-            // Add timestamp
             const timestamp = document.createElement('div');
             timestamp.className = 'message-timestamp';
             const now = new Date();
             timestamp.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             messageContent.appendChild(timestamp);
             
-            // Add reactions for bot messages
             if (!isUser) {
                 const reactionsDiv = document.createElement('div');
                 reactionsDiv.className = 'reaction-buttons';
@@ -1516,13 +1771,11 @@
                 `;
                 messageContent.appendChild(reactionsDiv);
                 
-                // Add copy button
                 const actionsDiv = document.createElement('div');
                 actionsDiv.className = 'message-actions';
                 actionsDiv.innerHTML = `
-                    <button class="action-icon tooltip" onclick="copyMessage(${currentMessageId})" title="Copy message">
+                    <button class="action-icon" onclick="copyMessage(${currentMessageId})" title="Copy message">
                         📋
-                        <span class="tooltiptext">Copy</span>
                     </button>
                 `;
                 messageContent.appendChild(actionsDiv);
@@ -1554,45 +1807,9 @@
             
             if (!isUser) {
                 updateSuggestions(content.toLowerCase());
-                
-                // Add contextual quick replies
-                if (content.toLowerCase().includes('consultation') || content.toLowerCase().includes('appointment')) {
-                    setTimeout(() => addQuickReplies(currentMessageId, [
-                        'Yes, schedule it!',
-                        'Tell me more first',
-                        'What are the costs?'
-                    ]), 500);
-                } else if (content.toLowerCase().includes('cost') || content.toLowerCase().includes('price')) {
-                    setTimeout(() => addQuickReplies(currentMessageId, [
-                        'What about financing?',
-                        'Any tax credits?',
-                        'Schedule consultation'
-                    ]), 500);
-                }
             }
             
             messageCount++;
-        }
-
-        function addQuickReplies(messageId, replies) {
-            const messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
-            if (!messageEl) return;
-            
-            const quickReplyDiv = document.createElement('div');
-            quickReplyDiv.className = 'quick-reply-container';
-            
-            replies.forEach(reply => {
-                const btn = document.createElement('button');
-                btn.className = 'quick-reply-btn';
-                btn.textContent = reply;
-                btn.onclick = () => {
-                    document.getElementById('userInput').value = reply;
-                    sendMessage();
-                };
-                quickReplyDiv.appendChild(btn);
-            });
-            
-            messageEl.querySelector('.message-content').appendChild(quickReplyDiv);
         }
 
         function showTypingIndicator() {
@@ -1652,14 +1869,6 @@
                 sendMessage();
             }
         }
-
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('active');
-                }
-            });
-        });
     </script>
 </body>
 </html>
