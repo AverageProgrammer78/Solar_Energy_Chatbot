@@ -53,6 +53,7 @@
             align-items: center;
             padding: 20px;
             transition: background 0.5s ease;
+            pointer-events: auto;
         }
 
         .container {
@@ -76,7 +77,7 @@
 
         .header {
             background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
-            padding: 30px 25px 20px 25px;
+            padding: 30px 25px 25px 25px;
             text-align: center;
             color: var(--text-primary);
             position: relative;
@@ -98,16 +99,18 @@
             font-size: 14px;
             opacity: 0.9;
             animation: slideDown 0.5s ease 0.1s backwards;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .header-buttons {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 10px;
-            padding: 0 60px;
         }
 
         .header-btn {
@@ -130,8 +133,8 @@
 
         .theme-toggle {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 25px;
+            right: 25px;
             background: rgba(255, 255, 255, 0.3);
             border: none;
             width: 40px;
@@ -145,7 +148,6 @@
             transition: all 0.3s ease;
             animation: fadeIn 0.5s ease 0.2s backwards;
             color: #2C3E50;
-            z-index: 10;
         }
 
         .theme-toggle:hover {
@@ -162,58 +164,6 @@
             background: rgba(255, 165, 0, 0.4);
         }
 
-        .typing-speed-control {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            z-index: 10;
-        }
-
-        .speed-btn {
-            background: rgba(255, 255, 255, 0.3);
-            border: none;
-            padding: 4px 8px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            color: var(--text-primary);
-        }
-
-        .speed-btn.active {
-            background: rgba(255, 255, 255, 0.6);
-            transform: scale(1.1);
-        }
-
-        .speed-btn:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        .sound-toggle {
-            position: absolute;
-            top: 60px;
-            left: 15px;
-            background: rgba(255, 255, 255, 0.3);
-            border: none;
-            padding: 6px 12px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            color: var(--text-primary);
-            z-index: 10;
-        }
-
-        .sound-toggle:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
-        }
-
         .chat-container {
             flex: 1;
             overflow-y: scroll;
@@ -221,6 +171,7 @@
             padding: 20px;
             background: var(--chat-bg);
             transition: background 0.3s ease;
+            pointer-events: auto;
             scroll-behavior: smooth;
         }
 
@@ -347,7 +298,6 @@
             gap: 10px;
             align-items: center;
             transition: background 0.3s ease;
-            position: relative;
         }
 
         #userInput {
@@ -413,6 +363,7 @@
 
         #sendBtn:active:not(:disabled) {
             transform: translateY(0);
+            animation: pulse 0.3s ease;
         }
 
         #sendBtn:disabled {
@@ -497,6 +448,84 @@
             30% { transform: translateY(-10px); }
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--container-bg);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.4s ease;
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content h2 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .modal-content p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-modal:hover {
+            background: var(--suggestion-bg);
+            transform: rotate(90deg);
+        }
+
         .scroll-bottom {
             position: absolute;
             bottom: 20px;
@@ -534,11 +563,201 @@
             flex-direction: column;
         }
 
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .quick-action-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+            color: #2C3E50;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+        }
+
+        .image-preview {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .file-upload-container {
+            display: none;
+        }
+
+        .typing-animation {
+            display: inline-block;
+        }
+
+        .typing-animation::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .fun-fact-box {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .fun-fact-box strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .action-icon {
+            background: var(--suggestion-bg);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .action-icon:hover {
+            background: #FFA500;
+            transform: scale(1.1);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background-color: #555;
+            color: white;
+            text-align: center;
+            padding: 5px 10px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -40px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .search-highlight {
+            background-color: yellow;
+            color: black;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .easter-egg {
+            animation: rainbow 3s linear infinite;
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .typing-speed-control {
+            position: absolute;
+            top: 70px;
+            right: 25px;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .speed-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            padding: 4px 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .speed-btn.active {
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(1.1);
+        }
+
+        .speed-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
         .message-timestamp {
             font-size: 10px;
             opacity: 0.6;
             margin-top: 4px;
             font-style: italic;
+        }
+
+        .sound-toggle {
+            position: absolute;
+            top: 70px;
+            left: 25px;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
         }
 
         .stats-container {
@@ -667,110 +886,22 @@
             color: var(--text-secondary);
             margin-top: 5px;
         }
-
-        .message-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .message:hover .message-actions {
-            opacity: 1;
-        }
-
-        .action-icon {
-            background: var(--suggestion-bg);
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .action-icon:hover {
-            background: #FFA500;
-            transform: scale(1.1);
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            background-color: #555;
-            color: white;
-            text-align: center;
-            padding: 5px 10px;
-            border-radius: 6px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -40px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .search-highlight {
-            background-color: yellow;
-            color: black;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .easter-egg {
-            animation: rainbow 3s linear infinite;
-        }
-
-        @keyframes rainbow {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊 Sound ON</button>
-            <div class="typing-speed-control">
-                <span style="font-size: 10px; opacity: 0.8;">Speed:</span>
-                <button class="speed-btn" onclick="setTypingSpeed('slow')">🐢</button>
-                <button class="speed-btn active" onclick="setTypingSpeed('normal')">⚡</button>
-                <button class="speed-btn" onclick="setTypingSpeed('fast')">🚀</button>
+            <div class="header-buttons">
+                <button class="header-btn" onclick="openContactForm()">📧 Contact Us</button>
+                <button class="header-btn" onclick="clearChat()">🗑️ Clear Chat</button>
+                <button class="header-btn" onclick="showFunFact()">💡 Fun Fact</button>
             </div>
             <h1>☀️ SolarBot</h1>
             <p>Your AI-powered solar energy assistant</p>
             <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
-            <div class="header-buttons">
-                <button class="header-btn" onclick="openContactForm()">📧 Contact</button>
-                <button class="header-btn" onclick="clearChat()">🗑️ Clear</button>
-                <button class="header-btn" onclick="showFunFact()">💡 Fun Fact</button>
-                <button class="header-btn" onclick="showStats()">📊 Stats</button>
-                <button class="header-btn" onclick="toggleSearch()">🔍 Search</button>
-            </div>
         </div>
 
         <div class="chat-wrapper">
-            <div class="search-container" id="searchContainer">
-                <input type="text" class="search-input" id="searchInput" placeholder="Search messages..." oninput="searchMessages()">
-                <div class="search-results" id="searchResults"></div>
-            </div>
             <div class="chat-container" id="chatContainer">
                 <div class="message bot" style="animation-delay: 0.1s">
                     <div class="avatar">☀️</div>
@@ -791,9 +922,20 @@
 
         <div class="input-container">
             <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Voice input">🎤</button>
-            <input type="text" id="userInput" placeholder="Ask me about solar power..." onkeypress="handleKeyPress(event)" oninput="updateWordCount()">
-            <div class="word-count" id="wordCount">0 / 500</div>
+            <input type="text" id="userInput" placeholder="Ask me about solar power..." onkeypress="handleKeyPress(event)">
             <button id="sendBtn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Contact Form Modal -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content" style="max-width: 650px;">
+            <button class="close-modal" onclick="closeContactForm()">×</button>
+            <h2>Get in Touch</h2>
+            <p>Interested in solar? Fill out this form and we'll contact you!</p>
+            <div id="formContent">
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf0bvHj2dJ3mAQo_FX-cdfG4md5pvnybIXOLCs67uYlFbIy7Q/viewform?embedded=true" width="100%" height="800" frameborder="0" marginheight="0" marginwidth="0" style="border-radius: 10px;">Loading…</iframe>
+            </div>
         </div>
     </div>
 
@@ -804,9 +946,6 @@
         let recognition = null;
         let chatHistory = [];
         let messageIdCounter = 0;
-        let typingSpeed = 1000;
-        let soundEnabled = true;
-        let reactions = {};
 
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
@@ -892,6 +1031,10 @@
             setTimeout(() => {
                 addMessage("I've opened our contact form in a new tab! Please fill it out and our solar experts will reach out to you within 24 hours. Feel free to ask me any other questions while you're here!", false);
             }, 300);
+        }
+
+        function closeContactForm() {
+            document.getElementById('contactModal').classList.remove('active');
         }
 
         function updateSuggestions(context) {
@@ -1058,164 +1201,6 @@
             return redirects[Math.floor(Math.random() * redirects.length)];
         }
 
-        function playSound(type) {
-            if (!soundEnabled) return;
-            
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            if (type === 'send') {
-                oscillator.frequency.value = 800;
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.1);
-            } else if (type === 'receive') {
-                oscillator.frequency.value = 600;
-                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.15);
-            }
-        }
-
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            const btn = document.getElementById('soundToggle');
-            btn.textContent = soundEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
-            showToast(soundEnabled ? 'Sound enabled' : 'Sound disabled');
-        }
-
-        function setTypingSpeed(speed) {
-            document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            if (speed === 'slow') typingSpeed = 2000;
-            else if (speed === 'normal') typingSpeed = 1000;
-            else if (speed === 'fast') typingSpeed = 300;
-            
-            showToast(`Typing speed set to ${speed}`);
-        }
-
-        function showStats() {
-            const totalMessages = chatHistory.length;
-            const userMessages = chatHistory.filter(m => m.role === 'user').length;
-            const botMessages = chatHistory.filter(m => m.role === 'assistant').length;
-            const totalWords = chatHistory.reduce((sum, m) => sum + m.content.split(' ').length, 0);
-            
-            const statsHTML = `
-                <div class="stats-container">
-                    <div class="stat-item">
-                        <span class="stat-number">${totalMessages}</span>
-                        <div class="stat-label">Total Messages</div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">${userMessages}</span>
-                        <div class="stat-label">Your Messages</div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">${botMessages}</span>
-                        <div class="stat-label">Bot Responses</div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">${totalWords}</span>
-                        <div class="stat-label">Total Words</div>
-                    </div>
-                </div>
-            `;
-            
-            addCustomMessage(statsHTML, false);
-        }
-
-        function addCustomMessage(htmlContent, isUser) {
-            const chatContainer = document.getElementById('chatContainer');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-            messageDiv.style.opacity = '0';
-            
-            const avatar = document.createElement('div');
-            avatar.className = 'avatar';
-            avatar.textContent = isUser ? '👤' : '☀️';
-            
-            const messageContent = document.createElement('div');
-            messageContent.className = 'message-content';
-            messageContent.innerHTML = htmlContent;
-            
-            messageDiv.appendChild(avatar);
-            messageDiv.appendChild(messageContent);
-            
-            chatContainer.appendChild(messageDiv);
-            
-            setTimeout(() => {
-                messageDiv.style.opacity = '1';
-            }, 10);
-            
-            scrollToBottom();
-        }
-
-        function updateWordCount() {
-            const input = document.getElementById('userInput');
-            const count = input.value.length;
-            const wordCountEl = document.getElementById('wordCount');
-            wordCountEl.textContent = `${count} / 500`;
-            
-            if (count > 450) {
-                wordCountEl.style.color = '#f44336';
-            } else if (count > 400) {
-                wordCountEl.style.color = '#FFA500';
-            } else {
-                wordCountEl.style.color = 'var(--text-secondary)';
-            }
-            
-            if (count >= 500) {
-                input.value = input.value.substring(0, 500);
-            }
-        }
-
-        function toggleSearch() {
-            const searchContainer = document.getElementById('searchContainer');
-            searchContainer.classList.toggle('active');
-            if (searchContainer.classList.contains('active')) {
-                document.getElementById('searchInput').focus();
-            }
-        }
-
-        function searchMessages() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const resultsEl = document.getElementById('searchResults');
-            
-            if (!query) {
-                resultsEl.textContent = '';
-                return;
-            }
-            
-            const matches = chatHistory.filter(m => 
-                m.content.toLowerCase().includes(query)
-            );
-            
-            resultsEl.textContent = `Found ${matches.length} message${matches.length !== 1 ? 's' : ''}`;
-        }
-
-        function addReaction(messageId, emoji) {
-            if (!reactions[messageId]) reactions[messageId] = {};
-            if (!reactions[messageId][emoji]) reactions[messageId][emoji] = 0;
-            reactions[messageId][emoji]++;
-            
-            const messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
-            const reactionBtn = messageEl.querySelector(`[data-emoji="${emoji}"]`);
-            if (reactionBtn) {
-                reactionBtn.classList.add('reacted');
-                const countEl = reactionBtn.querySelector('.reaction-count');
-                if (countEl) countEl.textContent = reactions[messageId][emoji];
-            }
-            
-            playSound('receive');
-        }
-
         function getRandomSolarFact() {
             const facts = [
                 "🌟 Solar Fact: The sun provides enough energy to Earth in one hour to power the entire world for a year! We just need to capture it better.",
@@ -1237,6 +1222,7 @@
                 chatHistory = [];
                 messageCount = 0;
                 
+                // Add welcome message back
                 setTimeout(() => {
                     const welcomeMsg = document.createElement('div');
                     welcomeMsg.className = 'message bot';
@@ -1283,13 +1269,15 @@
                 border-radius: 25px;
                 font-size: 14px;
                 z-index: 10000;
+                animation: fadeIn 0.3s ease;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             `;
             toast.textContent = message;
             document.body.appendChild(toast);
             
             setTimeout(() => {
-                toast.remove();
+                toast.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
             }, 2000);
         }
 
@@ -1298,8 +1286,7 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
             messageDiv.style.opacity = '0';
-            const currentMessageId = messageIdCounter++;
-            messageDiv.setAttribute('data-message-id', currentMessageId);
+            messageDiv.setAttribute('data-message-id', messageIdCounter++);
             
             const avatar = document.createElement('div');
             avatar.className = 'avatar';
@@ -1307,40 +1294,14 @@
             
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content';
+            messageContent.textContent = content;
             
-            const contentText = document.createElement('div');
-            contentText.textContent = content;
-            messageContent.appendChild(contentText);
-            
-            const timestamp = document.createElement('div');
-            timestamp.className = 'message-timestamp';
-            const now = new Date();
-            timestamp.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            messageContent.appendChild(timestamp);
-            
+            // Add copy button for bot messages
             if (!isUser) {
-                const reactionsDiv = document.createElement('div');
-                reactionsDiv.className = 'reaction-buttons';
-                reactionsDiv.innerHTML = `
-                    <button class="reaction-btn" data-emoji="👍" onclick="addReaction(${currentMessageId}, '👍')">
-                        👍 <span class="reaction-count">0</span>
-                    </button>
-                    <button class="reaction-btn" data-emoji="❤️" onclick="addReaction(${currentMessageId}, '❤️')">
-                        ❤️ <span class="reaction-count">0</span>
-                    </button>
-                    <button class="reaction-btn" data-emoji="😊" onclick="addReaction(${currentMessageId}, '😊')">
-                        😊 <span class="reaction-count">0</span>
-                    </button>
-                    <button class="reaction-btn" data-emoji="🎉" onclick="addReaction(${currentMessageId}, '🎉')">
-                        🎉 <span class="reaction-count">0</span>
-                    </button>
-                `;
-                messageContent.appendChild(reactionsDiv);
-                
                 const actionsDiv = document.createElement('div');
                 actionsDiv.className = 'message-actions';
                 actionsDiv.innerHTML = `
-                    <button class="action-icon tooltip" onclick="copyMessage(${currentMessageId})" title="Copy message">
+                    <button class="action-icon tooltip" onclick="copyMessage(${messageIdCounter - 1})" title="Copy message">
                         📋
                         <span class="tooltiptext">Copy</span>
                     </button>
@@ -1351,11 +1312,9 @@
             if (isUser) {
                 messageDiv.appendChild(messageContent);
                 messageDiv.appendChild(avatar);
-                playSound('send');
             } else {
                 messageDiv.appendChild(avatar);
                 messageDiv.appendChild(messageContent);
-                playSound('receive');
             }
             
             chatContainer.appendChild(messageDiv);
@@ -1374,44 +1333,9 @@
             
             if (!isUser) {
                 updateSuggestions(content.toLowerCase());
-                
-                if (content.toLowerCase().includes('consultation') || content.toLowerCase().includes('appointment')) {
-                    setTimeout(() => addQuickReplies(currentMessageId, [
-                        'Yes, schedule it!',
-                        'Tell me more first',
-                        'What are the costs?'
-                    ]), 500);
-                } else if (content.toLowerCase().includes('cost') || content.toLowerCase().includes('price')) {
-                    setTimeout(() => addQuickReplies(currentMessageId, [
-                        'What about financing?',
-                        'Any tax credits?',
-                        'Schedule consultation'
-                    ]), 500);
-                }
             }
             
             messageCount++;
-        }
-
-        function addQuickReplies(messageId, replies) {
-            const messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
-            if (!messageEl) return;
-            
-            const quickReplyDiv = document.createElement('div');
-            quickReplyDiv.className = 'quick-reply-container';
-            
-            replies.forEach(reply => {
-                const btn = document.createElement('button');
-                btn.className = 'quick-reply-btn';
-                btn.textContent = reply;
-                btn.onclick = () => {
-                    document.getElementById('userInput').value = reply;
-                    sendMessage();
-                };
-                quickReplyDiv.appendChild(btn);
-            });
-            
-            messageEl.querySelector('.message-content').appendChild(quickReplyDiv);
         }
 
         function showTypingIndicator() {
@@ -1447,7 +1371,6 @@
             
             addMessage(message, true);
             input.value = '';
-            updateWordCount();
             
             showTypingIndicator();
             
@@ -1457,7 +1380,7 @@
                 addMessage(response, false);
                 
                 input.focus();
-            }, typingSpeed + Math.random() * 500);
+            }, 1000 + Math.random() * 500);
         }
 
         function sendSuggestion(text) {
@@ -1471,6 +1394,14 @@
                 sendMessage();
             }
         }
+
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
     </script>
 </body>
 </html>
