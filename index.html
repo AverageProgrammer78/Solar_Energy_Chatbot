@@ -12,20 +12,53 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-gradient-start: #FDB813;
+            --bg-gradient-end: #FF6B35;
+            --primary-gradient-start: #FFD93D;
+            --primary-gradient-end: #FFA500;
+            --chat-bg: #FFF8E7;
+            --container-bg: white;
+            --text-primary: #2C3E50;
+            --text-secondary: #555;
+            --border-color: #e0e0e0;
+            --message-bot-bg: white;
+            --message-bot-border: #FFD93D;
+            --input-bg: white;
+            --suggestion-bg: #f0f0f0;
+        }
+
+        body.dark-theme {
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --primary-gradient-start: #FFA500;
+            --primary-gradient-end: #FF8C00;
+            --chat-bg: #0f0f1e;
+            --container-bg: #1a1a2e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --border-color: #2d2d44;
+            --message-bot-bg: #252538;
+            --message-bot-border: #FFA500;
+            --input-bg: #252538;
+            --suggestion-bg: #2d2d44;
+        }
+
         body {
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #FDB813 0%, #FF6B35 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            transition: background 0.5s ease;
         }
 
         .container {
             width: 100%;
             max-width: 800px;
-            background: white;
+            background: var(--container-bg);
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
@@ -33,13 +66,21 @@
             flex-direction: column;
             height: 90vh;
             max-height: 700px;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 70px rgba(0,0,0,0.35);
         }
 
         .header {
-            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+            background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
             padding: 25px;
             text-align: center;
-            color: #2C3E50;
+            color: var(--text-primary);
+            position: relative;
+            transition: background 0.3s ease;
         }
 
         .header h1 {
@@ -49,30 +90,114 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            animation: slideDown 0.5s ease;
         }
 
         .header p {
             font-size: 14px;
             opacity: 0.9;
+            animation: slideDown 0.5s ease 0.1s backwards;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: #808080;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease 0.2s backwards;
+        }
+
+        .theme-toggle:hover {
+            background: #696969;
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        body.dark-theme .theme-toggle {
+            background: #FFD700;
+        }
+
+        body.dark-theme .theme-toggle:hover {
+            background: #FFA500;
+        }
+
+        .contact-toggle {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease 0.2s backwards;
+            color: var(--text-primary);
+        }
+
+        .contact-toggle:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
         }
 
         .chat-container {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            background: #FFF8E7;
+            background: var(--chat-bg);
+            transition: background 0.3s ease;
         }
 
         .message {
             margin-bottom: 20px;
             display: flex;
             gap: 10px;
-            animation: fadeIn 0.3s ease-in;
+            animation: fadeInUp 0.4s ease;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .message.bot {
@@ -88,12 +213,18 @@
             padding: 12px 16px;
             border-radius: 18px;
             line-height: 1.5;
+            transition: all 0.3s ease;
+        }
+
+        .message-content:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .message.bot .message-content {
-            background: white;
-            border: 2px solid #FFD93D;
-            color: #2C3E50;
+            background: var(--message-bot-bg);
+            border: 2px solid var(--message-bot-border);
+            color: var(--text-primary);
         }
 
         .message.user .message-content {
@@ -110,10 +241,15 @@
             justify-content: center;
             font-size: 20px;
             flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .message:hover .avatar {
+            transform: scale(1.1) rotate(5deg);
         }
 
         .bot .avatar {
-            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+            background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
         }
 
         .user .avatar {
@@ -122,36 +258,41 @@
 
         .input-container {
             padding: 20px;
-            background: white;
-            border-top: 2px solid #e0e0e0;
+            background: var(--container-bg);
+            border-top: 2px solid var(--border-color);
             display: flex;
             gap: 10px;
+            transition: background 0.3s ease;
         }
 
         #userInput {
             flex: 1;
             padding: 12px 16px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 25px;
             font-size: 15px;
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.3s ease;
+            background: var(--input-bg);
+            color: var(--text-primary);
         }
 
         #userInput:focus {
             border-color: #FFA500;
+            box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.1);
+            transform: translateY(-1px);
         }
 
         #sendBtn {
             padding: 12px 30px;
-            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-            color: #2C3E50;
+            background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
+            color: var(--text-primary);
             border: none;
             border-radius: 25px;
             cursor: pointer;
             font-size: 15px;
             font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
         }
 
         #sendBtn:hover:not(:disabled) {
@@ -161,6 +302,7 @@
 
         #sendBtn:active:not(:disabled) {
             transform: translateY(0);
+            animation: pulse 0.3s ease;
         }
 
         #sendBtn:disabled {
@@ -170,27 +312,34 @@
 
         .suggestions {
             padding: 10px 20px;
-            background: white;
-            border-top: 1px solid #e0e0e0;
+            background: var(--container-bg);
+            border-top: 1px solid var(--border-color);
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
+            transition: all 0.3s ease;
+            max-height: 200px;
+            overflow-y: auto;
         }
 
         .suggestion-btn {
             padding: 8px 16px;
-            background: #f0f0f0;
-            border: 1px solid #ddd;
+            background: var(--suggestion-bg);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             cursor: pointer;
             font-size: 13px;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            animation: fadeIn 0.4s ease;
         }
 
         .suggestion-btn:hover {
-            background: #FFA500;
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
             color: white;
             border-color: #FFA500;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
         }
 
         .typing-indicator {
@@ -198,6 +347,7 @@
             align-items: center;
             gap: 10px;
             margin-bottom: 20px;
+            animation: fadeInUp 0.3s ease;
         }
 
         .typing-indicator.active {
@@ -208,8 +358,8 @@
             display: flex;
             gap: 4px;
             padding: 12px 16px;
-            background: white;
-            border: 2px solid #e0e0e0;
+            background: var(--message-bot-bg);
+            border: 2px solid var(--border-color);
             border-radius: 18px;
         }
 
@@ -233,29 +383,214 @@
             0%, 60%, 100% { transform: translateY(0); }
             30% { transform: translateY(-10px); }
         }
+
+        /* Contact Form Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--container-bg);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.4s ease;
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content h2 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .modal-content p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-modal:hover {
+            background: var(--suggestion-bg);
+            transform: rotate(90deg);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #FFA500;
+            box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+            color: #2C3E50;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 165, 0, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: slideDown 0.4s ease;
+        }
+
+        /* Scroll to bottom button */
+        .scroll-bottom {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .scroll-bottom.visible {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .scroll-bottom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .chat-wrapper {
+            position: relative;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
+            <button class="contact-toggle" onclick="openContactForm()">📧 Contact Us</button>
             <h1>☀️ SolarBot</h1>
             <p>Your solar energy assistant</p>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" style="color: #000000;">🌙</button>
         </div>
 
-        <div class="chat-container" id="chatContainer">
-            <div class="message bot">
-                <div class="avatar">☀️</div>
-                <div class="message-content">
-                    Hello! I'm SolarBot, your solar energy assistant! I'm here to help you learn about solar panels, their benefits, costs, and why they're a great investment for your home or business. What would you like to know?
+        <div class="chat-wrapper">
+            <div class="chat-container" id="chatContainer">
+                <div class="message bot" style="animation-delay: 0.1s">
+                    <div class="avatar">☀️</div>
+                    <div class="message-content">
+                        Hello! I'm SolarBot, your solar energy assistant! I'm here to help you learn about solar panels, their benefits, costs, and why they're a great investment for your home or business. What would you like to know?
+                    </div>
                 </div>
             </div>
+            <button class="scroll-bottom" id="scrollBottom" onclick="scrollToBottom()">↓</button>
         </div>
 
-        <div class="suggestions">
-            <button class="suggestion-btn" onclick="sendSuggestion('Why should I get solar panels?')">Why get solar?</button>
-            <button class="suggestion-btn" onclick="sendSuggestion('How much do solar panels cost?')">Cost info</button>
-            <button class="suggestion-btn" onclick="sendSuggestion('How do solar panels work?')">How they work</button>
-            <button class="suggestion-btn" onclick="sendSuggestion('What are the environmental benefits?')">Environmental benefits</button>
+        <div class="suggestions" id="suggestionsContainer">
+            <button class="suggestion-btn" onclick="sendSuggestion('Why should I get solar panels?')">💡 Why get solar?</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('How much do solar panels cost?')">💰 Cost info</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('How do solar panels work?')">⚡ How they work</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('What are the environmental benefits?')">🌍 Environmental benefits</button>
         </div>
 
         <div class="input-container">
@@ -264,7 +599,212 @@
         </div>
     </div>
 
+    <!-- Contact Form Modal -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeContactForm()">×</button>
+            <h2>Get in Touch</h2>
+            <p>Interested in solar? Fill out this form and we'll contact you with more information!</p>
+            <div id="formContent">
+                <form onsubmit="submitContactForm(event)">
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input type="text" id="contactName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="contactEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="contactPhone">
+                    </div>
+                    <div class="form-group">
+                        <label>Zip Code</label>
+                        <input type="text" id="contactZip" maxlength="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="contactMessage" placeholder="Tell us about your property and solar interests..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Submit Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let messageCount = 0;
+        let currentTheme = 'light';
+
+        // Initialize first message animation
+        setTimeout(() => {
+            const firstMessage = document.querySelector('.message');
+            if (firstMessage) firstMessage.style.opacity = '1';
+        }, 100);
+
+        function toggleTheme() {
+            const body = document.body;
+            const toggle = document.getElementById('themeToggle');
+            
+            if (currentTheme === 'light') {
+                body.classList.add('dark-theme');
+                toggle.textContent = '☀️';
+                toggle.style.color = '#000000';
+                currentTheme = 'dark';
+            } else {
+                body.classList.remove('dark-theme');
+                toggle.textContent = '🌙';
+                toggle.style.color = '#000000';
+                currentTheme = 'light';
+            }
+        }
+
+        function updateSuggestions(context) {
+            const suggestionsContainer = document.getElementById('suggestionsContainer');
+            let suggestions = [];
+
+            if (context.includes('cost') || context.includes('price') || context.includes('afford')) {
+                suggestions = [
+                    '💳 Financing options',
+                    '🎁 Available incentives',
+                    '📊 Calculate savings',
+                    '⏱️ Payback period'
+                ];
+            } else if (context.includes('install') || context.includes('process')) {
+                suggestions = [
+                    '📋 Installation steps',
+                    '🏠 Roof requirements',
+                    '⏰ How long it takes',
+                    '🔧 Maintenance needs'
+                ];
+            } else if (context.includes('work') || context.includes('technology')) {
+                suggestions = [
+                    '🔋 Energy storage',
+                    '☁️ Cloudy day performance',
+                    '📈 Efficiency ratings',
+                    '🌡️ Weather impact'
+                ];
+            } else if (context.includes('environment') || context.includes('green')) {
+                suggestions = [
+                    '🌱 Carbon reduction',
+                    '💧 Water savings',
+                    '♻️ Panel recycling',
+                    '🌍 Global impact'
+                ];
+            } else if (context.includes('saving') || context.includes('bill')) {
+                suggestions = [
+                    '💰 Monthly savings',
+                    '📊 ROI timeline',
+                    '📉 Rate protection',
+                    '🏡 Property value boost'
+                ];
+            } else {
+                suggestions = [
+                    '💡 Why get solar?',
+                    '💰 Cost info',
+                    '⚡ How they work',
+                    '🌍 Environmental benefits'
+                ];
+            }
+
+            suggestionsContainer.innerHTML = '';
+            suggestions.forEach((text, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'suggestion-btn';
+                btn.textContent = text;
+                btn.onclick = () => sendSuggestion(text.replace(/^[^\s]+\s/, ''));
+                btn.style.animationDelay = `${index * 0.1}s`;
+                suggestionsContainer.appendChild(btn);
+            });
+        }
+
+        function openContactForm() {
+            document.getElementById('contactModal').classList.add('active');
+        }
+
+        function closeContactForm() {
+            document.getElementById('contactModal').classList.remove('active');
+        }
+
+        function submitContactForm(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const phone = document.getElementById('contactPhone').value;
+            const zip = document.getElementById('contactZip').value;
+            const message = document.getElementById('contactMessage').value;
+
+            // In a real application, you would send this data to a server
+            console.log('Form submitted:', { name, email, phone, zip, message });
+
+            // Show success message
+            const formContent = document.getElementById('formContent');
+            formContent.innerHTML = `
+                <div class="success-message">
+                    <h3>Thank you, ${name}!</h3>
+                    <p>We've received your information and will contact you soon about your solar options.</p>
+                </div>
+                <button class="submit-btn" onclick="closeContactForm()">Close</button>
+            `;
+
+            // Add bot message about the form submission
+            setTimeout(() => {
+                addMessage(`Great news! I see you submitted a contact form. Our solar experts will reach out to ${email} within 24 hours to discuss your personalized solar solution. In the meantime, feel free to ask me any questions!`, false);
+                closeContactForm();
+                
+                // Reset form after closing
+                setTimeout(() => {
+                    formContent.innerHTML = `
+                        <form onsubmit="submitContactForm(event)">
+                            <div class="form-group">
+                                <label>Name *</label>
+                                <input type="text" id="contactName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email *</label>
+                                <input type="email" id="contactEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="tel" id="contactPhone">
+                            </div>
+                            <div class="form-group">
+                                <label>Zip Code</label>
+                                <input type="text" id="contactZip" maxlength="10">
+                            </div>
+                            <div class="form-group">
+                                <label>Message</label>
+                                <textarea id="contactMessage" placeholder="Tell us about your property and solar interests..."></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn">Submit Request</button>
+                        </form>
+                    `;
+                }, 500);
+            }, 1000);
+        }
+
+        function scrollToBottom() {
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.scrollTo({
+                top: chatContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        // Show/hide scroll button
+        document.getElementById('chatContainer').addEventListener('scroll', function() {
+            const scrollBottom = document.getElementById('scrollBottom');
+            const isScrolledUp = this.scrollHeight - this.scrollTop - this.clientHeight > 100;
+            
+            if (isScrolledUp) {
+                scrollBottom.classList.add('visible');
+            } else {
+                scrollBottom.classList.remove('visible');
+            }
+        });
+
         function getResponse(userMessage) {
             const msg = userMessage.toLowerCase();
             
@@ -289,7 +829,7 @@
             }
             
             // Cost questions
-            if (/cost|price|expensive|afford|pay|money|dollar|investment|cheap/i.test(msg)) {
+            if (/cost|price|expensive|afford|pay|money|dollar|investment|cheap|financing/i.test(msg)) {
                 const costs = [
                     "Great question about costs! A typical residential solar system runs $15,000-$25,000 before incentives. But here's the exciting part: the federal tax credit immediately reduces that by 30%, and many states offer additional rebates! Most homeowners pay an effective cost of $10,500-$17,500. You can finance with $0 down, and monthly payments are often less than your current electric bill. Over 25 years, you'll save $30,000-$75,000 depending on location. The system pays for itself in 6-10 years, then it's pure savings!",
                     "Solar costs have dropped dramatically! The average 6kW system costs around $18,000 before incentives. With the 30% federal tax credit, that drops to about $12,600. Many states offer additional rebates that can reduce costs further. Financing options make solar accessible - you can start with $0 down and have monthly payments lower than your electric bill. You're essentially trading your utility payment for a solar payment that leads to ownership. After 6-10 years, it's paid off and you have free electricity for 15-20+ more years!",
@@ -404,6 +944,7 @@
             const chatContainer = document.getElementById('chatContainer');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            messageDiv.style.opacity = '0';
             
             const avatar = document.createElement('div');
             avatar.className = 'avatar';
@@ -422,7 +963,20 @@
             }
             
             chatContainer.appendChild(messageDiv);
+            
+            // Trigger animation
+            setTimeout(() => {
+                messageDiv.style.opacity = '1';
+            }, 10);
+            
             chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Update suggestions based on bot response
+            if (!isUser) {
+                updateSuggestions(content.toLowerCase());
+            }
+            
+            messageCount++;
         }
 
         function showTypingIndicator() {
@@ -474,7 +1028,7 @@
                 sendBtn.disabled = false;
                 input.disabled = false;
                 input.focus();
-            }, 800);
+            }, 1000 + Math.random() * 500);
         }
 
         function sendSuggestion(text) {
@@ -488,6 +1042,13 @@
                 sendMessage();
             }
         }
+
+        // Close modal when clicking outside
+        document.getElementById('contactModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeContactForm();
+            }
+        });
     </script>
 </body>
 </html>
