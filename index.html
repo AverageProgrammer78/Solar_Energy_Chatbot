@@ -4,36 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SolarBot - Your Solar Energy Assistant</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <button class="new-chat-btn" onclick="clearChat()">
+                <span>➕</span>
+                <span>New chat</span>
+            </button>
+        </div>
+        <div class="sidebar-menu">
+            <button class="menu-item" onclick="showCalculator()">
+                <span>🧮</span>
+                <span>Calculator</span>
+            </button>
+            <button class="menu-item" onclick="openContactForm()">
+                <span>📧</span>
+                <span>Contact Us</span>
+            </button>
+            <button class="menu-item" onclick="exportChat()">
+                <span>💾</span>
+                <span>Export Chat</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
         <div class="header">
-            <button class="menu-toggle" onclick="toggleMenu()" id="menuToggle" aria-label="Menu">☰</button>
-            <div class="menu-dropdown" id="menuDropdown">
-                <button class="menu-item" onclick="showCalculator(); closeMenu();">🧮 Calculator</button>
-                <button class="menu-item" onclick="openContactForm(); closeMenu();">📧 Contact Us</button>
-                <button class="menu-item" onclick="exportChat(); closeMenu();">💾 Export Chat</button>
-                <button class="menu-item" onclick="clearChat(); closeMenu();">🗑️ Clear Chat</button>
+            <div class="header-left">
+                <button class="menu-toggle" onclick="toggleSidebar()" id="menuToggle">☰</button>
+                <span class="header-title">SolarBot</span>
             </div>
-            <h1>☀️ SolarBot</h1>
-            <p>Your AI-powered solar energy assistant</p>
-            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" aria-label="Toggle theme">🌙</button>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
         </div>
 
-        <div class="chat-wrapper">
+        <!-- Chat Area -->
+        <div class="chat-wrapper" id="chatWrapper">
             <div class="chat-container" id="chatContainer">
-                <div class="message bot" style="animation-delay: 0.1s">
-                    <div class="avatar">☀️</div>
-                    <div class="message-content">
-                        Hello! I'm SolarBot, your AI-powered solar energy assistant! 🌟 I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. How can I help you today?
+                <div class="message bot">
+                    <div class="message-wrapper">
+                        <div class="avatar">☀️</div>
+                        <div class="message-content">
+                            Hello! I'm SolarBot, your AI-powered solar energy assistant! 🌟 I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. How can I help you today?
+                        </div>
                     </div>
                 </div>
             </div>
-            <button class="scroll-bottom" id="scrollBottom" onclick="scrollToBottom()" aria-label="Scroll to bottom">↓</button>
+            <button class="scroll-bottom" id="scrollBottom" onclick="scrollToBottom()">↓</button>
         </div>
 
+        <!-- Suggestions -->
         <div class="suggestions" id="suggestionsContainer">
             <button class="suggestion-btn" onclick="sendSuggestion('Why should I get solar panels?')">💡 Why solar?</button>
             <button class="suggestion-btn" onclick="sendSuggestion('How much do solar panels cost?')">💰 Costs</button>
@@ -41,10 +66,17 @@
             <button class="suggestion-btn" onclick="showCalculator()">🧮 Calculate savings</button>
         </div>
 
-        <div class="input-container">
-            <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Voice input" aria-label="Voice input">🎤</button>
-            <input type="text" id="userInput" placeholder="Ask me about solar power..." onkeypress="handleKeyPress(event)" maxlength="500" aria-label="Message input">
-            <button id="sendBtn" onclick="sendMessage()">Send</button>
+        <!-- Input Area -->
+        <div class="input-wrapper">
+            <div class="input-container">
+                <div class="input-box">
+                    <input type="text" id="userInput" placeholder="Message SolarBot..." onkeypress="handleKeyPress(event)" maxlength="500">
+                </div>
+                <div class="input-actions">
+                    <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Voice input">🎤</button>
+                    <button id="sendBtn" onclick="sendMessage()">➤</button>
+                </div>
+            </div>
         </div>
     </div>
 
