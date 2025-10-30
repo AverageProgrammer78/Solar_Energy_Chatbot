@@ -1,9 +1,11 @@
 // ===== STATE MANAGEMENT =====
 let state = {
+    currentUser: null,
+    currentChatId: null,
     currentTheme: 'light',
     isListening: false,
     recognition: null,
-    chatHistory: [],
+    chatHistory: {},
     messageIdCounter: 0,
     sidebarOpen: false,
     analytics: {
@@ -18,13 +20,275 @@ let state = {
 
 const sessionStart = Date.now();
 
+// Demo users database (in production, this would be server-side)
+const USERS_DB = {
+    'demo': { password: 'demo123', name: 'Demo User' },
+    'admin': { password: 'admin123', name: 'Admin' },
+    'user': { password: 'user123', name: 'Test User' }
+};
+
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
+    checkExistingSession();
     initializeSpeechRecognition();
     initializeScrollDetection();
-    trackEvent('sessionStarted');
 });
 
+// ===== AUTHENTICATION =====
+function checkExistingSession() {
+    const savedUser = localStorage.getItem('solarbot_user');
+    if (savedUser) {
+        state.currentUser = savedUser;
+        loadUserData();
+        showApp();
+    }
+}
+
+function handleLogin(event) {
+    event.preventDefault();
+    
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    
+    if (USERS_DB[username] && USERS_DB[username].password === password) {
+        state.currentUser = username;
+        localStorage.setItem('solarbot_user', username);
+        
+        loadUserData();
+        showApp();
+        showToast(`Welcome back, ${USERS_DB[username].name}!`);
+        trackEvent('userLoggedIn');
+    } else {
+        showToast('Invalid username or password');
+        document.getElementById('password').value = '';
+    }
+}
+
+function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        saveCurrentChat();
+        
+        localStorage.removeItem('solarbot_user');
+        state.currentUser = null;
+        state.currentChatId = null;
+        
+        document.getElementById('loginContainer').style.display = 'flex';
+        document.getElementById('appContainer').style.display = 'none';
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+        
+        showToast('Logged out successfully');
+        trackEvent('userLoggedOut');
+    }
+}
+
+function showApp() {
+    document.getElementById('loginContainer').style.display = 'none';
+    document.getElementById('appContainer').style.display = 'flex';
+    document.getElementById('currentUser').textContent = USERS_DB[state.currentUser].name;
+    
+    loadChatHistory();
+    
+    if (!state.currentChatId) {
+        createNewChat();
+    }
+}
+
+// ===== DATA PERSISTENCE =====
+function loadUserData() {
+    const userKey = `solarbot_chats_${state.currentUser}`;
+    const savedChats = localStorage.getItem(userKey);
+    
+    if (savedChats) {
+        try {
+            state.chatHistory = JSON.parse(savedChats);
+        } catch (e) {
+            console.error('Error loading chat history:', e);
+            state.chatHistory = {};
+        }
+    } else {
+        state.chatHistory = {};
+    }
+    
+    const savedTheme = localStorage.getItem(`solarbot_theme_${state.currentUser}`);
+    if (savedTheme) {
+        state.currentTheme = savedTheme;
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-theme');
+            document.getElementById('themeToggle').textContent = '☀️';
+        }
+    }
+}
+
+function saveUserData() {
+    if (!state.currentUser) return;
+    
+    const userKey = `solarbot_chats_${state.currentUser}`;
+    localStorage.setItem(userKey, JSON.stringify(state.chatHistory));
+    localStorage.setItem(`solarbot_theme_${state.currentUser}`, state.currentTheme);
+}
+
+function saveCurrentChat() {
+    if (!state.currentChatId) return;
+    
+    const chatContainer = document.getElementById('chatContainer');
+    const messages = [];
+    
+    chatContainer.querySelectorAll('.message').forEach(msgDiv => {
+        const isUser = msgDiv.classList.contains('user');
+        const content = msgDiv.querySelector('.message-content').textContent;
+        
+        if (content && !content.includes('☀️ Solar Savings Calculator')) {
+            messages.push({
+                role: isUser ? 'user' : 'assistant',
+                content: content,
+                timestamp: new Date().toISOString()
+            });
+        }
+    });
+    
+    if (messages.length > 0) {
+        const firstUserMessage = messages.find(m => m.role === 'user');
+        const preview = firstUserMessage ? firstUserMessage.content.substring(0, 50) : 'New chat';
+        
+        state.chatHistory[state.currentChatId] = {
+            id: state.currentChatId,
+            messages: messages,
+            preview: preview,
+            createdAt: state.chatHistory[state.currentChatId]?.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        
+        saveUserData();
+    }
+}
+
+// ===== CHAT MANAGEMENT =====
+function createNewChat() {
+    saveCurrentChat();
+    
+    const chatId = 'chat_' + Date.now();
+    state.currentChatId = chatId;
+    
+    const chatContainer = document.getElementById('chatContainer');
+    chatContainer.innerHTML = `
+        <div class="message bot">
+            <div class="message-wrapper">
+                <div class="avatar">☀️</div>
+                <div class="message-content">
+                    Hello! I'm SolarBot, your AI-powered solar energy assistant! 🌟 I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. How can I help you today?
+                </div>
+            </div>
+        </div>
+    `;
+    
+    updateSuggestions('');
+    loadChatHistory();
+    showToast('New chat created');
+}
+
+function loadChat(chatId) {
+    if (chatId === state.currentChatId) return;
+    
+    saveCurrentChat();
+    
+    const chat = state.chatHistory[chatId];
+    if (!chat) return;
+    
+    state.currentChatId = chatId;
+    
+    const chatContainer = document.getElementById('chatContainer');
+    chatContainer.innerHTML = '';
+    
+    chat.messages.forEach(msg => {
+        addMessageToDOM(msg.content, msg.role === 'user');
+    });
+    
+    loadChatHistory();
+    scrollToBottom();
+    showToast('Chat loaded');
+}
+
+function loadChatHistory() {
+    const historyContainer = document.getElementById('chatHistory');
+    historyContainer.innerHTML = '';
+    
+    const chats = Object.values(state.chatHistory).sort((a, b) => 
+        new Date(b.updatedAt) - new Date(a.updatedAt)
+    );
+    
+    if (chats.length === 0) {
+        historyContainer.innerHTML = '<div style="padding: 12px; text-align: center; color: var(--text-secondary); font-size: 13px;">No chat history yet</div>';
+        return;
+    }
+    
+    chats.forEach(chat => {
+        const chatItem = document.createElement('button');
+        chatItem.className = 'chat-history-item';
+        if (chat.id === state.currentChatId) {
+            chatItem.classList.add('active');
+        }
+        
+        const date = new Date(chat.updatedAt);
+        const dateStr = formatDate(date);
+        
+        chatItem.innerHTML = `
+            <span class="chat-item-text">${chat.preview}</span>
+            <span class="chat-item-date">${dateStr}</span>
+            <button class="chat-delete-btn" onclick="deleteChatById('${chat.id}', event)">🗑️</button>
+        `;
+        
+        chatItem.onclick = (e) => {
+            if (!e.target.classList.contains('chat-delete-btn')) {
+                loadChat(chat.id);
+            }
+        };
+        
+        historyContainer.appendChild(chatItem);
+    });
+}
+
+function deleteCurrentChat() {
+    if (!state.currentChatId) return;
+    
+    if (confirm('Are you sure you want to delete this chat?')) {
+        delete state.chatHistory[state.currentChatId];
+        saveUserData();
+        createNewChat();
+        showToast('Chat deleted');
+    }
+}
+
+function deleteChatById(chatId, event) {
+    event.stopPropagation();
+    
+    if (confirm('Delete this chat?')) {
+        delete state.chatHistory[chatId];
+        saveUserData();
+        
+        if (chatId === state.currentChatId) {
+            createNewChat();
+        } else {
+            loadChatHistory();
+        }
+        
+        showToast('Chat deleted');
+    }
+}
+
+function formatDate(date) {
+    const now = new Date();
+    const diff = now - date;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    if (days === 0) return 'Today';
+    if (days === 1) return 'Yesterday';
+    if (days < 7) return `${days}d ago`;
+    
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// ===== INITIALIZATION FUNCTIONS =====
 function initializeSpeechRecognition() {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -48,17 +312,20 @@ function initializeSpeechRecognition() {
             stopVoice();
         };
     } else {
-        document.getElementById('voiceBtn').style.display = 'none';
+        const voiceBtn = document.getElementById('voiceBtn');
+        if (voiceBtn) voiceBtn.style.display = 'none';
     }
 }
 
 function initializeScrollDetection() {
     const chatWrapper = document.getElementById('chatWrapper');
-    chatWrapper.addEventListener('scroll', function() {
-        const scrollBottom = document.getElementById('scrollBottom');
-        const isScrolledUp = this.scrollHeight - this.scrollTop - this.clientHeight > 100;
-        scrollBottom.classList.toggle('visible', isScrolledUp);
-    });
+    if (chatWrapper) {
+        chatWrapper.addEventListener('scroll', function() {
+            const scrollBottom = document.getElementById('scrollBottom');
+            const isScrolledUp = this.scrollHeight - this.scrollTop - this.clientHeight > 100;
+            scrollBottom.classList.toggle('visible', isScrolledUp);
+        });
+    }
 }
 
 // ===== SIDEBAR =====
@@ -90,6 +357,7 @@ function toggleTheme() {
         showToast('Light theme activated');
     }
     
+    saveUserData();
     trackEvent('themeToggled', { theme: state.currentTheme });
 }
 
@@ -242,17 +510,18 @@ function calculateSavings() {
     }
 }
 
-// ===== CHAT EXPORT & CLEAR =====
+// ===== CHAT EXPORT =====
 function exportChat() {
-    if (state.chatHistory.length === 0) {
+    if (!state.currentChatId || !state.chatHistory[state.currentChatId]) {
         showToast('No messages to export');
         return;
     }
     
+    const chat = state.chatHistory[state.currentChatId];
     let exportText = '=== SolarBot Chat Transcript ===\n';
     exportText += `Date: ${new Date().toLocaleString()}\n\n`;
     
-    state.chatHistory.forEach((msg) => {
+    chat.messages.forEach((msg) => {
         const role = msg.role === 'user' ? 'You' : 'SolarBot';
         const time = new Date(msg.timestamp).toLocaleTimeString();
         exportText += `[${time}] ${role}:\n${msg.content}\n\n`;
@@ -269,26 +538,7 @@ function exportChat() {
     URL.revokeObjectURL(url);
     
     showToast('Chat exported successfully');
-    trackEvent('chatExported', { messageCount: state.chatHistory.length });
-}
-
-function clearChat() {
-    if (!confirm('Are you sure you want to clear the chat history?')) {
-        return;
-    }
-    
-    const chatContainer = document.getElementById('chatContainer');
-    chatContainer.innerHTML = '';
-    state.chatHistory = [];
-    state.messageIdCounter = 0;
-    
-    setTimeout(() => {
-        addMessage("Hello! I'm SolarBot, your AI-powered solar energy assistant! 🌟 I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. How can I help you today?", false);
-    }, 100);
-    
-    updateSuggestions('');
-    showToast('Chat cleared');
-    trackEvent('chatCleared');
+    trackEvent('chatExported', { messageCount: chat.messages.length });
 }
 
 // ===== MESSAGE HANDLING =====
@@ -309,6 +559,7 @@ function sendMessage() {
         const response = getResponse(message);
         hideTypingIndicator();
         addMessage(response, false);
+        saveCurrentChat();
         input.focus();
     }, 1000 + Math.random() * 500);
 }
@@ -326,6 +577,14 @@ function handleKeyPress(event) {
 }
 
 function addMessage(content, isUser) {
+    addMessageToDOM(content, isUser);
+    
+    if (!isUser) {
+        updateSuggestions(content.toLowerCase());
+    }
+}
+
+function addMessageToDOM(content, isUser) {
     const chatContainer = document.getElementById('chatContainer');
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
@@ -347,17 +606,7 @@ function addMessage(content, isUser) {
     
     chatContainer.appendChild(messageDiv);
     
-    state.chatHistory.push({
-        role: isUser ? 'user' : 'assistant',
-        content: content,
-        timestamp: new Date().toISOString()
-    });
-    
     scrollToBottom();
-    
-    if (!isUser) {
-        updateSuggestions(content.toLowerCase());
-    }
 }
 
 function addCustomMessage(htmlContent, isUser) {
@@ -579,8 +828,9 @@ function trackEvent(eventName, eventData = {}) {
 function getAnalytics() {
     return {
         ...state.analytics,
-        totalMessages: state.chatHistory.length,
-        sessionDuration: Date.now() - sessionStart
+        totalMessages: Object.values(state.chatHistory).reduce((sum, chat) => sum + chat.messages.length, 0),
+        sessionDuration: Date.now() - sessionStart,
+        totalChats: Object.keys(state.chatHistory).length
     };
 }
 
