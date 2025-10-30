@@ -5,19 +5,19 @@
 }
 
 :root {
-    --bg-color: #ffffff;
-    --sidebar-bg: #f7f7f8;
-    --chat-bg: #ffffff;
-    --text-primary: #2e2e2e;
-    --text-secondary: #6e6e80;
-    --border-color: #e5e5e5;
-    --user-msg-bg: #f4f4f4;
-    --bot-msg-bg: transparent;
-    --hover-bg: #ececf1;
-    --input-bg: #f4f4f4;
-    --input-border: transparent;
-    --button-primary: #10a37f;
-    --button-hover: #0d8f6d;
+    --bg-color: #fff8e7;
+    --sidebar-bg: #ffe4b5;
+    --chat-bg: #fff8e7;
+    --text-primary: #8b4513;
+    --text-secondary: #d2691e;
+    --border-color: #ffd699;
+    --user-msg-bg: #ffe4b5;
+    --bot-msg-bg: #fff4d9;
+    --hover-bg: #ffd699;
+    --input-bg: #fff4d9;
+    --input-border: #ffd699;
+    --button-primary: #ff8c00;
+    --button-hover: #ff7700;
 }
 
 body.dark-theme {
@@ -51,7 +51,7 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ff9a56 0%, #ffd700 50%, #ff8c00 100%);
     padding: 20px;
 }
 
@@ -451,7 +451,7 @@ body {
 }
 
 .message.user .avatar {
-    background: #5436DA;
+    background: #ff8c00;
 }
 
 .message-content {
