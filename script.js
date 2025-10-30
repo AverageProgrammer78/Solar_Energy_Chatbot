@@ -5,7 +5,7 @@ let state = {
     recognition: null,
     chatHistory: [],
     messageIdCounter: 0,
-    menuOpen: false,
+    sidebarOpen: false,
     analytics: {
         messagessent: 0,
         calculatorUsed: 0,
@@ -16,46 +16,12 @@ let state = {
     }
 };
 
-// ===== ANALYTICS =====
-function trackEvent(eventName, eventData = {}) {
-    console.log('📊 Analytics Event:', eventName, eventData);
-    
-    // Update local analytics
-    if (state.analytics.hasOwnProperty(eventName)) {
-        state.analytics[eventName]++;
-    }
-    
-    // Here you would send to your analytics service (Google Analytics, Mixpanel, etc.)
-    // Example for Google Analytics 4:
-    // gtag('event', eventName, eventData);
-    
-    // Example for custom backend:
-    // fetch('/api/analytics', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ event: eventName, data: eventData, timestamp: new Date().toISOString() })
-    // });
-}
-
-function getAnalytics() {
-    return {
-        ...state.analytics,
-        totalMessages: state.chatHistory.length,
-        sessionDuration: Date.now() - sessionStart
-    };
-}
-
 const sessionStart = Date.now();
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
     initializeSpeechRecognition();
     initializeScrollDetection();
-    animateWelcomeMessage();
-    
-    // Close menu when clicking outside
-    document.addEventListener('click', handleOutsideClick);
-    
     trackEvent('sessionStarted');
 });
 
@@ -87,31 +53,27 @@ function initializeSpeechRecognition() {
 }
 
 function initializeScrollDetection() {
-    const chatContainer = document.getElementById('chatContainer');
-    chatContainer.addEventListener('scroll', function() {
+    const chatWrapper = document.getElementById('chatWrapper');
+    chatWrapper.addEventListener('scroll', function() {
         const scrollBottom = document.getElementById('scrollBottom');
         const isScrolledUp = this.scrollHeight - this.scrollTop - this.clientHeight > 100;
         scrollBottom.classList.toggle('visible', isScrolledUp);
     });
 }
 
-function animateWelcomeMessage() {
-    setTimeout(() => {
-        const firstMessage = document.querySelector('.message');
-        if (firstMessage) firstMessage.style.opacity = '1';
-    }, 100);
-}
-
-function handleOutsideClick(event) {
-    const menu = document.getElementById('menuDropdown');
-    const toggle = document.getElementById('menuToggle');
+// ===== SIDEBAR =====
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    state.sidebarOpen = !state.sidebarOpen;
     
-    if (menu && toggle && !menu.contains(event.target) && !toggle.contains(event.target)) {
-        closeMenu();
+    if (window.innerWidth <= 768) {
+        sidebar.classList.toggle('active');
+    } else {
+        sidebar.classList.toggle('collapsed');
     }
 }
 
-// ===== THEME MANAGEMENT =====
+// ===== THEME =====
 function toggleTheme() {
     const body = document.body;
     const toggle = document.getElementById('themeToggle');
@@ -121,33 +83,14 @@ function toggleTheme() {
     if (state.currentTheme === 'dark') {
         body.classList.add('dark-theme');
         toggle.textContent = '☀️';
-        showToast('Dark theme activated 🌙');
+        showToast('Dark theme activated');
     } else {
         body.classList.remove('dark-theme');
         toggle.textContent = '🌙';
-        showToast('Light theme activated ☀️');
+        showToast('Light theme activated');
     }
     
     trackEvent('themeToggled', { theme: state.currentTheme });
-}
-
-// ===== MENU MANAGEMENT =====
-function toggleMenu() {
-    state.menuOpen = !state.menuOpen;
-    const menu = document.getElementById('menuDropdown');
-    const toggle = document.getElementById('menuToggle');
-    
-    menu.classList.toggle('active', state.menuOpen);
-    toggle.textContent = state.menuOpen ? '✕' : '☰';
-}
-
-function closeMenu() {
-    state.menuOpen = false;
-    const menu = document.getElementById('menuDropdown');
-    const toggle = document.getElementById('menuToggle');
-    
-    menu.classList.remove('active');
-    toggle.textContent = '☰';
 }
 
 // ===== VOICE INPUT =====
@@ -163,9 +106,9 @@ function startVoice() {
     if (state.recognition) {
         try {
             state.isListening = true;
-            document.getElementById('voiceBtn').classList.add('listening');
+            document.getElementById('voiceBtn').style.color = '#ef4444';
             state.recognition.start();
-            showToast('Listening... 🎤');
+            showToast('Listening...');
         } catch (error) {
             console.error('Voice recognition error:', error);
             stopVoice();
@@ -177,7 +120,7 @@ function stopVoice() {
     if (state.recognition && state.isListening) {
         try {
             state.isListening = false;
-            document.getElementById('voiceBtn').classList.remove('listening');
+            document.getElementById('voiceBtn').style.color = '';
             state.recognition.stop();
         } catch (error) {
             console.error('Error stopping recognition:', error);
@@ -185,19 +128,17 @@ function stopVoice() {
     }
 }
 
-// ===== CONTACT FORM =====
+// ===== CONTACT & CALCULATOR =====
 function openContactForm() {
     const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSf0bvHj2dJ3mAQo_FX-cdfG4md5pvnybIXOLCs67uYlFbIy7Q/viewform';
     window.open(formUrl, '_blank');
-    
     trackEvent('contactFormOpened');
     
     setTimeout(() => {
-        addMessage("I've opened our contact form in a new tab! Please fill it out and our solar experts will reach out to you within 24 hours. Feel free to ask me any other questions!", false);
+        addMessage("I've opened our contact form in a new tab! Please fill it out and our solar experts will reach out to you within 24 hours.", false);
     }, 300);
 }
 
-// ===== CALCULATOR =====
 function showCalculator() {
     const calculatorHTML = `
         <div class="calculator-container">
@@ -232,7 +173,7 @@ function showCalculator() {
         </div>
     `;
     addCustomMessage(calculatorHTML, false);
-    showToast('Calculator loaded! Fill in your details 📊');
+    showToast('Calculator loaded');
     trackEvent('calculatorUsed');
 }
 
@@ -242,48 +183,44 @@ function calculateSavings() {
     const systemSize = parseFloat(document.getElementById('systemSize')?.value) || 7;
     const stateIncentive = parseFloat(document.getElementById('state')?.value) || 0.08;
     
-    // Input validation
     if (electricBill <= 0 || sunHours <= 0) {
-        showToast('Please enter valid positive numbers');
+        showToast('Please enter valid numbers');
         return;
     }
     
-    // Calculations
     const systemCost = systemSize * 3000;
     const federalTaxCredit = systemCost * 0.30;
     const stateIncentiveAmount = systemCost * stateIncentive;
     const netCost = systemCost - federalTaxCredit - stateIncentiveAmount;
-    
-    const annualProduction = systemSize * sunHours * 365 * 0.75;
     const annualSavings = electricBill * 12;
     const paybackYears = (netCost / annualSavings).toFixed(1);
     const lifetime25Savings = (annualSavings * 25 - netCost).toFixed(0);
-    const monthlyPayment = (netCost / 180).toFixed(0); // 15-year loan
+    const monthlyPayment = (netCost / 180).toFixed(0);
     
     const resultsHTML = `
         <div class="result-item">
             <div class="result-label">System Cost (Before Incentives)</div>
-            <div class="result-value">${systemCost.toLocaleString()}</div>
+            <div class="result-value">$${systemCost.toLocaleString()}</div>
         </div>
         <div class="result-item">
             <div class="result-label">Federal Tax Credit (30%)</div>
-            <div class="result-value">-${federalTaxCredit.toLocaleString()}</div>
+            <div class="result-value">-$${federalTaxCredit.toLocaleString()}</div>
         </div>
         <div class="result-item">
             <div class="result-label">State Incentives</div>
-            <div class="result-value">-${stateIncentiveAmount.toLocaleString()}</div>
+            <div class="result-value">-$${stateIncentiveAmount.toLocaleString()}</div>
         </div>
         <div class="result-item">
             <div class="result-label">Net Cost</div>
-            <div class="result-value">${netCost.toLocaleString()}</div>
+            <div class="result-value">$${netCost.toLocaleString()}</div>
         </div>
         <div class="result-item">
             <div class="result-label">Annual Savings</div>
-            <div class="result-value">${annualSavings.toLocaleString()}</div>
+            <div class="result-value">$${annualSavings.toLocaleString()}</div>
         </div>
         <div class="result-item">
             <div class="result-label">Monthly Loan Payment (15yr)</div>
-            <div class="result-value">${monthlyPayment}/mo</div>
+            <div class="result-value">$${monthlyPayment}/mo</div>
         </div>
         <div class="result-item">
             <div class="result-label">Payback Period</div>
@@ -291,7 +228,7 @@ function calculateSavings() {
         </div>
         <div class="result-item">
             <div class="result-label">25-Year Savings</div>
-            <div class="result-value" style="color: #4CAF50; font-size: 24px;">${lifetime25Savings.toLocaleString()} 🎉</div>
+            <div class="result-value" style="font-size: 24px;">$${lifetime25Savings.toLocaleString()} 🎉</div>
         </div>
     `;
     
@@ -299,38 +236,27 @@ function calculateSavings() {
     if (resultsDiv) {
         resultsDiv.innerHTML = resultsHTML;
         resultsDiv.classList.add('show');
-        showToast('Calculations complete! 💰');
-        
+        showToast('Calculations complete');
         setTimeout(() => scrollToBottom(), 100);
-        
-        trackEvent('calculationCompleted', {
-            systemSize,
-            estimatedSavings: lifetime25Savings,
-            paybackYears
-        });
+        trackEvent('calculationCompleted', { systemSize, estimatedSavings: lifetime25Savings, paybackYears });
     }
 }
 
-// ===== CHAT EXPORT =====
+// ===== CHAT EXPORT & CLEAR =====
 function exportChat() {
     if (state.chatHistory.length === 0) {
-        showToast('No messages to export! 📭');
+        showToast('No messages to export');
         return;
     }
     
     let exportText = '=== SolarBot Chat Transcript ===\n';
-    exportText += `Date: ${new Date().toLocaleString()}\n`;
-    exportText += `Total Messages: ${state.chatHistory.length}\n`;
-    exportText += '=================================\n\n';
+    exportText += `Date: ${new Date().toLocaleString()}\n\n`;
     
     state.chatHistory.forEach((msg) => {
         const role = msg.role === 'user' ? 'You' : 'SolarBot';
         const time = new Date(msg.timestamp).toLocaleTimeString();
         exportText += `[${time}] ${role}:\n${msg.content}\n\n`;
     });
-    
-    exportText += '=================================\n';
-    exportText += 'Generated by SolarBot - Your Solar Energy Assistant\n';
     
     const blob = new Blob([exportText], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -342,11 +268,10 @@ function exportChat() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    showToast('Chat exported successfully! 📥');
+    showToast('Chat exported successfully');
     trackEvent('chatExported', { messageCount: state.chatHistory.length });
 }
 
-// ===== CHAT MANAGEMENT =====
 function clearChat() {
     if (!confirm('Are you sure you want to clear the chat history?')) {
         return;
@@ -358,21 +283,11 @@ function clearChat() {
     state.messageIdCounter = 0;
     
     setTimeout(() => {
-        const welcomeMsg = document.createElement('div');
-        welcomeMsg.className = 'message bot';
-        welcomeMsg.style.opacity = '0';
-        welcomeMsg.innerHTML = `
-            <div class="avatar">☀️</div>
-            <div class="message-content">
-                Hello! I'm SolarBot, your AI-powered solar energy assistant! 🌟 I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. How can I help you today?
-            </div>
-        `;
-        chatContainer.appendChild(welcomeMsg);
-        setTimeout(() => welcomeMsg.style.opacity = '1', 10);
+        addMessage("Hello! I'm SolarBot, your AI-powered solar energy assistant! 🌟 I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. How can I help you today?", false);
     }, 100);
     
     updateSuggestions('');
-    showToast('Chat cleared! 🗑️');
+    showToast('Chat cleared');
     trackEvent('chatCleared');
 }
 
@@ -414,9 +329,9 @@ function addMessage(content, isUser) {
     const chatContainer = document.getElementById('chatContainer');
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-    messageDiv.style.opacity = '0';
-    const currentMessageId = state.messageIdCounter++;
-    messageDiv.setAttribute('data-message-id', currentMessageId);
+    
+    const messageWrapper = document.createElement('div');
+    messageWrapper.className = 'message-wrapper';
     
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
@@ -426,13 +341,9 @@ function addMessage(content, isUser) {
     messageContent.className = 'message-content';
     messageContent.textContent = content;
     
-    if (isUser) {
-        messageDiv.appendChild(messageContent);
-        messageDiv.appendChild(avatar);
-    } else {
-        messageDiv.appendChild(avatar);
-        messageDiv.appendChild(messageContent);
-    }
+    messageWrapper.appendChild(avatar);
+    messageWrapper.appendChild(messageContent);
+    messageDiv.appendChild(messageWrapper);
     
     chatContainer.appendChild(messageDiv);
     
@@ -441,10 +352,6 @@ function addMessage(content, isUser) {
         content: content,
         timestamp: new Date().toISOString()
     });
-    
-    setTimeout(() => {
-        messageDiv.style.opacity = '1';
-    }, 10);
     
     scrollToBottom();
     
@@ -457,7 +364,9 @@ function addCustomMessage(htmlContent, isUser) {
     const chatContainer = document.getElementById('chatContainer');
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-    messageDiv.style.opacity = '0';
+    
+    const messageWrapper = document.createElement('div');
+    messageWrapper.className = 'message-wrapper';
     
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
@@ -467,14 +376,11 @@ function addCustomMessage(htmlContent, isUser) {
     messageContent.className = 'message-content';
     messageContent.innerHTML = htmlContent;
     
-    messageDiv.appendChild(avatar);
-    messageDiv.appendChild(messageContent);
+    messageWrapper.appendChild(avatar);
+    messageWrapper.appendChild(messageContent);
+    messageDiv.appendChild(messageWrapper);
     
     chatContainer.appendChild(messageDiv);
-    
-    setTimeout(() => {
-        messageDiv.style.opacity = '1';
-    }, 10);
     
     scrollToBottom();
 }
@@ -485,6 +391,9 @@ function showTypingIndicator() {
     typingDiv.className = 'typing-indicator active';
     typingDiv.id = 'typingIndicator';
     
+    const messageWrapper = document.createElement('div');
+    messageWrapper.className = 'message-wrapper';
+    
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
     avatar.textContent = '☀️';
@@ -493,8 +402,10 @@ function showTypingIndicator() {
     dotsDiv.className = 'typing-dots';
     dotsDiv.innerHTML = '<span></span><span></span><span></span>';
     
-    typingDiv.appendChild(avatar);
-    typingDiv.appendChild(dotsDiv);
+    messageWrapper.appendChild(avatar);
+    messageWrapper.appendChild(dotsDiv);
+    typingDiv.appendChild(messageWrapper);
+    
     chatContainer.appendChild(typingDiv);
     scrollToBottom();
 }
@@ -510,7 +421,7 @@ function getResponse(userMessage) {
     
     if (/calculat|savings|estimate|how much.*save/i.test(msg)) {
         setTimeout(() => showCalculator(), 500);
-        return "Great! Let me pull up the solar savings calculator for you. Just fill in your details and I'll calculate your potential savings, payback period, and 25-year benefits! 🧮";
+        return "Great! Let me pull up the solar savings calculator for you. Just fill in your details and I'll calculate your potential savings, payback period, and 25-year benefits!";
     }
     
     if (/schedule|appointment|consult|book|meet|visit/i.test(msg)) {
@@ -619,7 +530,7 @@ function updateSuggestions(context) {
     }
 
     suggestionsContainer.innerHTML = '';
-    suggestions.forEach((item, index) => {
+    suggestions.forEach((item) => {
         const btn = document.createElement('button');
         btn.className = 'suggestion-btn';
         btn.textContent = item.display;
@@ -630,17 +541,16 @@ function updateSuggestions(context) {
             btn.onclick = () => sendSuggestion(item.query);
         }
         
-        btn.style.animationDelay = `${index * 0.1}s`;
         suggestionsContainer.appendChild(btn);
     });
 }
 
 // ===== UTILITIES =====
 function scrollToBottom() {
-    const chatContainer = document.getElementById('chatContainer');
+    const chatWrapper = document.getElementById('chatWrapper');
     setTimeout(() => {
-        chatContainer.scrollTo({
-            top: chatContainer.scrollHeight,
+        chatWrapper.scrollTo({
+            top: chatWrapper.scrollHeight,
             behavior: 'smooth'
         });
     }, 100);
@@ -648,20 +558,7 @@ function scrollToBottom() {
 
 function showToast(message) {
     const toast = document.createElement('div');
-    toast.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #4CAF50;
-        color: white;
-        padding: 12px 24px;
-        border-radius: 25px;
-        font-size: 14px;
-        z-index: 10000;
-        animation: fadeIn 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    `;
+    toast.className = 'toast';
     toast.textContent = message;
     document.body.appendChild(toast);
     
@@ -672,5 +569,19 @@ function showToast(message) {
     }, 2000);
 }
 
-// ===== EXPORT ANALYTICS FUNCTION =====
+function trackEvent(eventName, eventData = {}) {
+    console.log('📊 Analytics Event:', eventName, eventData);
+    if (state.analytics.hasOwnProperty(eventName)) {
+        state.analytics[eventName]++;
+    }
+}
+
+function getAnalytics() {
+    return {
+        ...state.analytics,
+        totalMessages: state.chatHistory.length,
+        sessionDuration: Date.now() - sessionStart
+    };
+}
+
 window.getSolarBotAnalytics = getAnalytics;
