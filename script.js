@@ -126,7 +126,10 @@ function showMotivationalBanner() {
     const banner = document.getElementById('motivationalBanner');
     const bannerText = document.getElementById('bannerText');
     
-    if (!banner || !bannerText) return;
+    if (!banner || !bannerText) {
+        console.log('Banner elements not found, skipping...');
+        return;
+    }
     
     // Check if banner was closed in this session
     const bannerClosed = sessionStorage.getItem('banner_closed');
@@ -144,8 +147,10 @@ function showMotivationalBanner() {
 
 function closeBanner() {
     const banner = document.getElementById('motivationalBanner');
-    banner.classList.add('hidden');
-    sessionStorage.setItem('banner_closed', 'true');
+    if (banner) {
+        banner.classList.add('hidden');
+        sessionStorage.setItem('banner_closed', 'true');
+    }
 }
 
 // Show banner when app loads
@@ -170,18 +175,23 @@ function handleLogin(event) {
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
     
+    console.log('Login attempt:', username); // Debug
+    
     if (USERS_DB[username] && USERS_DB[username].password === password) {
         state.currentUser = username;
         localStorage.setItem('solarbot_user', username);
         
         loadUserData();
         showApp();
-        showToast(`Welcome back, ${USERS_DB[username].name}!`);
+        showToast(`Welcome, ${USERS_DB[username].name}!`);
         trackEvent('userLoggedIn');
     } else {
         showToast('Invalid username or password');
         document.getElementById('password').value = '';
+        console.log('Login failed for:', username); // Debug
     }
+    
+    return false; // Prevent form submission
 }
 
 function handleLogout() {
@@ -203,9 +213,23 @@ function handleLogout() {
 }
 
 function showApp() {
-    document.getElementById('loginContainer').style.display = 'none';
-    document.getElementById('appContainer').style.display = 'flex';
-    document.getElementById('currentUser').textContent = USERS_DB[state.currentUser].name;
+    console.log('showApp called'); // Debug
+    
+    const loginContainer = document.getElementById('loginContainer');
+    const appContainer = document.getElementById('appContainer');
+    
+    if (!loginContainer || !appContainer) {
+        console.error('Container elements not found!');
+        return;
+    }
+    
+    loginContainer.style.display = 'none';
+    appContainer.style.display = 'flex';
+    
+    const currentUserElement = document.getElementById('currentUser');
+    if (currentUserElement && state.currentUser && USERS_DB[state.currentUser]) {
+        currentUserElement.textContent = USERS_DB[state.currentUser].name;
+    }
     
     loadChatHistory();
     
@@ -213,8 +237,14 @@ function showApp() {
         createNewChat();
     }
     
-    // Show motivational banner
-    setTimeout(() => showMotivationalBanner(), 500);
+    // Show motivational banner after a short delay
+    setTimeout(() => {
+        try {
+            showMotivationalBanner();
+        } catch (e) {
+            console.error('Error showing banner:', e);
+        }
+    }, 500);
 }
 
 // ===== DATA PERSISTENCE =====
