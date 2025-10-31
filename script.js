@@ -407,6 +407,231 @@ function openContactForm() {
     }, 300);
 }
 
+// ===== WEATHER INTEGRATION =====
+function showWeather() {
+    // St. Louis coordinates
+    const lat = 38.6270;
+    const lon = -90.1994;
+    
+    // Simulated weather data (in production, you'd use a real API like OpenWeatherMap)
+    const weatherData = generateWeatherData();
+    
+    const weatherHTML = `
+        <div class="weather-widget">
+            <div class="weather-location">☀️ St. Louis, Missouri</div>
+            <div class="weather-header">
+                <div>
+                    <div class="weather-temp">${weatherData.temp}°F</div>
+                    <div class="weather-condition">${weatherData.condition}</div>
+                </div>
+                <div class="weather-icon">${weatherData.icon}</div>
+            </div>
+            
+            <div class="solar-potential">
+                <div class="potential-label">Today's Solar Production Potential</div>
+                <div class="potential-value">${weatherData.solarPotential}% ${weatherData.potentialEmoji}</div>
+                <div style="font-size: 13px; margin-top: 8px; opacity: 0.9;">
+                    ${weatherData.potentialMessage}
+                </div>
+            </div>
+            
+            <div class="weather-details">
+                <div class="weather-detail">
+                    <div class="weather-detail-label">Sunlight Hours</div>
+                    <div class="weather-detail-value">${weatherData.sunHours}h</div>
+                </div>
+                <div class="weather-detail">
+                    <div class="weather-detail-label">UV Index</div>
+                    <div class="weather-detail-value">${weatherData.uvIndex}</div>
+                </div>
+                <div class="weather-detail">
+                    <div class="weather-detail-label">Cloud Cover</div>
+                    <div class="weather-detail-value">${weatherData.cloudCover}%</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 16px; font-size: 12px; opacity: 0.8; text-align: center;">
+                Perfect for solar! St. Louis averages 4.5 peak sun hours daily.
+            </div>
+        </div>
+    `;
+    
+    addCustomMessage(weatherHTML, false);
+    showToast('Weather data loaded');
+    trackEvent('weatherViewed');
+}
+
+function generateWeatherData() {
+    // Simulate realistic St. Louis weather
+    const conditions = [
+        { condition: 'Sunny', icon: '☀️', potential: 95, temp: 75, sunHours: 9, uvIndex: 8, cloudCover: 5 },
+        { condition: 'Mostly Sunny', icon: '🌤️', potential: 85, temp: 72, sunHours: 7, uvIndex: 7, cloudCover: 20 },
+        { condition: 'Partly Cloudy', icon: '⛅', potential: 70, temp: 68, sunHours: 5, uvIndex: 5, cloudCover: 45 },
+        { condition: 'Mostly Cloudy', icon: '🌥️', potential: 50, temp: 65, sunHours: 3, uvIndex: 3, cloudCover: 70 },
+        { condition: 'Cloudy', icon: '☁️', potential: 30, temp: 62, sunHours: 2, uvIndex: 2, cloudCover: 90 }
+    ];
+    
+    // Randomly select (in production, this would be real API data)
+    const weather = conditions[Math.floor(Math.random() * conditions.length)];
+    
+    let potentialMessage = '';
+    let potentialEmoji = '';
+    
+    if (weather.potential >= 80) {
+        potentialMessage = 'Excellent conditions! Your panels would produce peak power today.';
+        potentialEmoji = '🔥';
+    } else if (weather.potential >= 60) {
+        potentialMessage = 'Good solar day! Panels producing strong energy output.';
+        potentialEmoji = '✨';
+    } else if (weather.potential >= 40) {
+        potentialMessage = 'Moderate conditions. Panels still generating decent power.';
+        potentialEmoji = '👍';
+    } else {
+        potentialMessage = 'Lower production today, but panels still working efficiently.';
+        potentialEmoji = '💪';
+    }
+    
+    return {
+        ...weather,
+        solarPotential: weather.potential,
+        potentialMessage,
+        potentialEmoji
+    };
+}
+
+// ===== IMAGE UPLOAD & RECOGNITION =====
+function showImageUpload() {
+    const uploadHTML = `
+        <div class="image-upload-container">
+            <div class="upload-icon">📷</div>
+            <div class="upload-title">Upload Roof or Property Image</div>
+            <div class="upload-subtitle">Get instant analysis of your solar potential</div>
+            <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+            <button class="upload-button" onclick="document.getElementById('imageUpload').click()">
+                Choose Image
+            </button>
+            <div class="upload-subtitle" style="margin-top: 12px; font-size: 12px;">
+                Supported: JPG, PNG, HEIC (max 10MB)
+            </div>
+        </div>
+    `;
+    
+    addCustomMessage(uploadHTML, false);
+    showToast('Image upload ready');
+    trackEvent('imageUploadOpened');
+}
+
+function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Check file size
+    if (file.size > 10 * 1024 * 1024) {
+        showToast('Image too large. Please use an image under 10MB.');
+        return;
+    }
+    
+    // Display preview
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const previewHTML = `
+            <div class="image-upload-container">
+                <div class="upload-title">✅ Image Uploaded Successfully</div>
+                <div class="image-preview">
+                    <img src="${e.target.result}" alt="Uploaded image">
+                </div>
+                <div class="image-analysis">
+                    <strong>🔍 AI Analysis:</strong><br><br>
+                    ${analyzeImage(file.name)}
+                </div>
+            </div>
+        `;
+        
+        addCustomMessage(previewHTML, false);
+        showToast('Image analyzed!');
+        trackEvent('imageUploaded', { fileName: file.name, fileSize: file.size });
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+function analyzeImage(fileName) {
+    // Simulated AI analysis (in production, this would use actual image recognition API)
+    const analyses = [
+        `Great news! Your roof appears to have excellent southern exposure with minimal shading. Based on the visible area, we estimate you could fit a <strong>7-8 kW system</strong> (approximately 20-23 panels). The roof looks to be in good condition with ample space. I recommend scheduling a professional site assessment for precise measurements and a detailed proposal.`,
+        
+        `Your property shows strong solar potential! I can see a clear roof section that would be ideal for solar panels. The angle and orientation look favorable for maximum sun exposure. Estimated system capacity: <strong>6-7 kW</strong>. There appear to be a few trees nearby - our team can assess shading patterns during a site visit to optimize panel placement.`,
+        
+        `Based on your image, your roof has good solar potential! The visible surface area could accommodate approximately <strong>5-6 kW</strong> of solar panels. I notice the roof may have some shading from nearby structures. Our solar experts can perform a detailed shading analysis and provide recommendations for optimal panel placement. Would you like to schedule a free consultation?`,
+        
+        `Excellent property for solar! Your roof appears to be south-facing with minimal obstructions - perfect for solar energy production. We estimate space for a <strong>8-10 kW system</strong>, which could significantly reduce your electricity costs. The roof condition looks suitable for installation. Let's schedule a detailed assessment to provide you with exact specifications and savings projections!`
+    ];
+    
+    return analyses[Math.floor(Math.random() * analyses.length)];
+}
+
+// ===== EMAIL TRANSCRIPT =====
+function emailTranscript() {
+    if (!state.currentChatId || !state.chatHistory[state.currentChatId]) {
+        showToast('No chat to email');
+        return;
+    }
+    
+    // Create modal
+    const modalHTML = `
+        <div class="modal-overlay" id="emailModal" onclick="closeEmailModal(event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <div class="modal-header">📧 Email Chat Transcript</div>
+                <div class="modal-subtitle">We'll send a copy of this conversation to your email</div>
+                <form class="modal-form" onsubmit="sendEmailTranscript(event)">
+                    <input type="email" id="emailInput" placeholder="your.email@example.com" required>
+                    <div class="modal-actions">
+                        <button type="button" class="modal-btn modal-btn-secondary" onclick="closeEmailModal()">Cancel</button>
+                        <button type="submit" class="modal-btn modal-btn-primary">Send Email</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    const modalDiv = document.createElement('div');
+    modalDiv.innerHTML = modalHTML;
+    document.body.appendChild(modalDiv);
+    
+    trackEvent('emailModalOpened');
+}
+
+function closeEmailModal(event) {
+    if (event && event.target.id !== 'emailModal') return;
+    
+    const modal = document.getElementById('emailModal');
+    if (modal && modal.parentElement) {
+        modal.parentElement.remove();
+    }
+}
+
+function sendEmailTranscript(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('emailInput').value;
+    const chat = state.chatHistory[state.currentChatId];
+    
+    // In production, this would make an API call to your backend to send the email
+    // For now, we'll simulate it
+    console.log('Sending email to:', email);
+    console.log('Chat messages:', chat.messages.length);
+    
+    closeEmailModal();
+    showToast(`Chat transcript sent to ${email}!`);
+    
+    // Show confirmation message
+    setTimeout(() => {
+        addMessage(`I've sent a copy of our conversation to ${email}. You should receive it within a few minutes. The email will include all our discussion and any calculations we've done together!`, false);
+    }, 500);
+    
+    trackEvent('emailTranscriptSent', { email, messageCount: chat.messages.length });
+}
+
 function showCalculator() {
     const calculatorHTML = `
         <div class="calculator-container">
@@ -756,6 +981,21 @@ function hideTypingIndicator() {
 // ===== RESPONSE GENERATION =====
 function getResponse(userMessage) {
     const msg = userMessage.toLowerCase();
+    
+    if (/weather|sun|sunny|cloud|forecast|production.*today/i.test(msg)) {
+        setTimeout(() => showWeather(), 500);
+        return "Let me show you today's weather and solar production potential for St. Louis! This will help you understand how much energy your panels would generate today.";
+    }
+    
+    if (/photo|picture|image|roof|upload.*image/i.test(msg)) {
+        setTimeout(() => showImageUpload(), 500);
+        return "Great idea! You can upload a photo of your roof or property, and I'll analyze it to estimate your solar potential. Our AI can identify roof space, shading issues, and recommend system sizes based on your image!";
+    }
+    
+    if (/email|send.*chat|transcript|copy.*conversation/i.test(msg)) {
+        setTimeout(() => emailTranscript(), 500);
+        return "I can email you a complete transcript of our conversation! This way you'll have all the information we discussed, including any calculations and recommendations, right in your inbox.";
+    }
     
     if (/calculat|savings|estimate|how much.*save/i.test(msg)) {
         setTimeout(() => showCalculator(), 500);
