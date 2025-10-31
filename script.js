@@ -1,4 +1,73 @@
-// ===== STATE MANAGEMENT =====
+// Roof condition impact
+    let roofCostNote = '';
+    if (roofCondition === 'poor') {
+        roofCostNote = '<div class="result-note warning">Note: Your roof may need replacement before solar installation (additional $8,000-$15,000)</div>';
+    } else if (roofCondition === 'fair') {
+        roofCostNote = '<div class="result-note info">Your roof should last through installation, but consider replacement within 10 years</div>';
+    }
+    
+    // Calculate production and savings
+    const annualProduction = recommendedSystemSize * 1000 * stlSunHours * 365 * shadingFactor * 0.78; // 78% system efficiency
+    const annualSavings = (annualProduction / 1000) * stlElectricRate;
+    const paybackYears = (netCost / annualSavings).toFixed(1);
+    const lifetime25Savings = (annualSavings * 25 - netCost).toFixed(0);
+    const monthlyPayment = (netCost / 180).toFixed(0); // 15-year loan
+    const monthlySavings = (annualSavings / 12).toFixed(0);
+    
+    // Environmental impact
+    const co2Offset = (annualProduction / 1000 * 0.7).toFixed(1); // tons of CO2 per year
+    const treesEquivalent = Math.round(co2Offset * 16.5); // trees planted equivalent
+    
+    const resultsHTML = `
+        ${roofCostNote}
+        <div class="result-highlight">
+            <div class="result-label">Recommended System Size for Your Home</div>
+            <div class="result-value" style="font-size: 28px; color: #ff8c00;">${recommendedSystemSize} kW</div>
+            <small style="color: var(--text-secondary);">Optimized for ${homeSize} sq ft in St. Louis</small>
+        </div>
+        
+        <div class="result-section-title">Cost Breakdown</div>
+        <div class="result-item">
+            <div class="result-label">System Cost (Before Incentives)</div>
+            <div class="result-value">${systemCost.toLocaleString()}</div>
+            <small>${recommendedSystemSize} kW × ${(costPerWatt * 1000).toLocaleString()} = ${systemCost.toLocaleString()}</small>
+        </div>
+        <div class="result-item">
+            <div class="result-label">Federal Tax Credit (30%)</div>
+            <div class="result-value" style="color: #10a37f;">-${federalTaxCredit.toLocaleString()}</div>
+        </div>
+        <div class="result-item">
+            <div class="result-label">Missouri State Rebate (5%)</div>
+            <div class="result-value" style="color: #10a37f;">-${stateRebate.toLocaleString()}</div>
+        </div>
+        <div class="result-item highlight">
+            <div class="result-label">Your Net Investment</div>
+            <div class="result-value" style="font-size: 24px;">${netCost.toLocaleString()}</div>
+        </div>
+        
+        <div class="result-section-title">Annual Production & Savings</div>
+        <div class="result-item">
+            <div class="result-label">Estimated Annual Production</div>
+            <div class="result-value">${(annualProduction / 1000).toLocaleString()} kWh</div>
+            <small>Based on ${stlSunHours} sun hours/day in St. Louis${shadingFactor < 1 ? ` (adjusted for ${roofShading} shading)` : ''}</small>
+        </div>
+        <div class="result-item">
+            <div class="result-label">Annual Savings (Ameren Missouri rates)</div>
+            <div class="result-value">${annualSavings.toLocaleString()}</div>
+            <small>~${monthlySavings}/month in electricity savings</small>
+        </div>
+        
+        <div class="result-section-title">Financial Summary</div>
+        <div class="result-item">
+            <div class="result-label">Monthly Loan Payment (15-year, 4.5% APR)</div>
+            <div class="result-value">${monthlyPayment}/month</div>
+            <small>Your monthly savings (${monthlySavings}) can offset this payment!</small>
+        </div>
+        <div class="result-item">
+            <div class="result-label">Payback Period</div>
+            <div class="result-value">${paybackYears} years</div>
+        </div>
+        <div class// ===== STATE MANAGEMENT =====
 let state = {
     currentUser: null,
     currentChatId: null,
@@ -33,6 +102,57 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeSpeechRecognition();
     initializeScrollDetection();
 });
+
+// ===== MOTIVATIONAL BANNER =====
+const motivationalQuotes = [
+    "Welcome back! Every sunny day is an opportunity to save with solar energy.",
+    "The best time to go solar was yesterday. The second best time is today!",
+    "Your journey to energy independence starts here. Let's explore your solar potential!",
+    "St. Louis gets 4.5 hours of peak sunlight daily - perfect for solar savings!",
+    "Going solar is one of the smartest investments you can make for your home.",
+    "The sun provides more energy in one hour than the world uses in a year. Let's harness it!",
+    "Join hundreds of St. Louis families already saving with solar energy.",
+    "Energy independence is just a conversation away. How can I help today?",
+    "The future is bright - and it's powered by solar energy!",
+    "Your roof is valuable real estate. Let's make it work for you!",
+    "Small steps today lead to big savings tomorrow. Ready to explore solar?",
+    "Solar panels aren't an expense - they're an investment in your future.",
+    "Did you know? Solar panels can increase your home value by 3-4%!",
+    "The sun is free - let's help you capture its power and reduce your bills!",
+    "Every kilowatt-hour generated by solar is a step toward a cleaner planet."
+];
+
+function showMotivationalBanner() {
+    const banner = document.getElementById('motivationalBanner');
+    const bannerText = document.getElementById('bannerText');
+    
+    if (!banner || !bannerText) return;
+    
+    // Check if banner was closed in this session
+    const bannerClosed = sessionStorage.getItem('banner_closed');
+    if (bannerClosed) {
+        banner.classList.add('hidden');
+        return;
+    }
+    
+    // Select random quote
+    const quote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+    bannerText.textContent = quote;
+    
+    banner.classList.remove('hidden');
+}
+
+function closeBanner() {
+    const banner = document.getElementById('motivationalBanner');
+    banner.classList.add('hidden');
+    sessionStorage.setItem('banner_closed', 'true');
+}
+
+// Show banner when app loads
+function showAppWithBanner() {
+    showApp();
+    setTimeout(() => showMotivationalBanner(), 500);
+}
 
 // ===== AUTHENTICATION =====
 function checkExistingSession() {
@@ -92,6 +212,9 @@ function showApp() {
     if (!state.currentChatId) {
         createNewChat();
     }
+    
+    // Show motivational banner
+    setTimeout(() => showMotivationalBanner(), 500);
 }
 
 // ===== DATA PERSISTENCE =====
@@ -340,6 +463,27 @@ function toggleSidebar() {
     }
 }
 
+// ===== DROPDOWN MENU =====
+function toggleMenuDropdown() {
+    const dropdown = document.getElementById('menuDropdown');
+    dropdown.classList.toggle('show');
+}
+
+function closeMenuDropdown() {
+    const dropdown = document.getElementById('menuDropdown');
+    dropdown.classList.remove('show');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('menuDropdown');
+    const menuButton = event.target.closest('.icon-btn');
+    
+    if (dropdown && !dropdown.contains(event.target) && !menuButton) {
+        dropdown.classList.remove('show');
+    }
+});
+
 // ===== THEME =====
 function toggleTheme() {
     const body = document.body;
@@ -418,7 +562,7 @@ function showWeather() {
     
     const weatherHTML = `
         <div class="weather-widget">
-            <div class="weather-location">☀️ St. Louis, Missouri</div>
+            <div class="weather-location">St. Louis, Missouri</div>
             <div class="weather-header">
                 <div>
                     <div class="weather-temp">${weatherData.temp}°F</div>
@@ -429,7 +573,7 @@ function showWeather() {
             
             <div class="solar-potential">
                 <div class="potential-label">Today's Solar Production Potential</div>
-                <div class="potential-value">${weatherData.solarPotential}% ${weatherData.potentialEmoji}</div>
+                <div class="potential-value">${weatherData.solarPotential}%</div>
                 <div style="font-size: 13px; margin-top: 8px; opacity: 0.9;">
                     ${weatherData.potentialMessage}
                 </div>
@@ -451,7 +595,7 @@ function showWeather() {
             </div>
             
             <div style="margin-top: 16px; font-size: 12px; opacity: 0.8; text-align: center;">
-                Perfect for solar! St. Louis averages 4.5 peak sun hours daily.
+                St. Louis averages 4.5 peak sun hours daily - excellent for solar energy!
             </div>
         </div>
     `;
@@ -464,178 +608,39 @@ function showWeather() {
 function generateWeatherData() {
     // Simulate realistic St. Louis weather
     const conditions = [
-        { condition: 'Sunny', icon: '☀️', potential: 95, temp: 75, sunHours: 9, uvIndex: 8, cloudCover: 5 },
-        { condition: 'Mostly Sunny', icon: '🌤️', potential: 85, temp: 72, sunHours: 7, uvIndex: 7, cloudCover: 20 },
+        { condition: 'Sunny', icon: '☀', potential: 95, temp: 75, sunHours: 9, uvIndex: 8, cloudCover: 5 },
+        { condition: 'Mostly Sunny', icon: '🌤', potential: 85, temp: 72, sunHours: 7, uvIndex: 7, cloudCover: 20 },
         { condition: 'Partly Cloudy', icon: '⛅', potential: 70, temp: 68, sunHours: 5, uvIndex: 5, cloudCover: 45 },
-        { condition: 'Mostly Cloudy', icon: '🌥️', potential: 50, temp: 65, sunHours: 3, uvIndex: 3, cloudCover: 70 },
-        { condition: 'Cloudy', icon: '☁️', potential: 30, temp: 62, sunHours: 2, uvIndex: 2, cloudCover: 90 }
+        { condition: 'Mostly Cloudy', icon: '☁', potential: 50, temp: 65, sunHours: 3, uvIndex: 3, cloudCover: 70 },
+        { condition: 'Cloudy', icon: '☁', potential: 30, temp: 62, sunHours: 2, uvIndex: 2, cloudCover: 90 }
     ];
     
     // Randomly select (in production, this would be real API data)
     const weather = conditions[Math.floor(Math.random() * conditions.length)];
     
     let potentialMessage = '';
-    let potentialEmoji = '';
     
     if (weather.potential >= 80) {
         potentialMessage = 'Excellent conditions! Your panels would produce peak power today.';
-        potentialEmoji = '🔥';
     } else if (weather.potential >= 60) {
         potentialMessage = 'Good solar day! Panels producing strong energy output.';
-        potentialEmoji = '✨';
     } else if (weather.potential >= 40) {
         potentialMessage = 'Moderate conditions. Panels still generating decent power.';
-        potentialEmoji = '👍';
     } else {
         potentialMessage = 'Lower production today, but panels still working efficiently.';
-        potentialEmoji = '💪';
     }
     
     return {
         ...weather,
         solarPotential: weather.potential,
-        potentialMessage,
-        potentialEmoji
+        potentialMessage
     };
-}
-
-// ===== IMAGE UPLOAD & RECOGNITION =====
-function showImageUpload() {
-    const uploadHTML = `
-        <div class="image-upload-container">
-            <div class="upload-icon">📷</div>
-            <div class="upload-title">Upload Roof or Property Image</div>
-            <div class="upload-subtitle">Get instant analysis of your solar potential</div>
-            <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-            <button class="upload-button" onclick="document.getElementById('imageUpload').click()">
-                Choose Image
-            </button>
-            <div class="upload-subtitle" style="margin-top: 12px; font-size: 12px;">
-                Supported: JPG, PNG, HEIC (max 10MB)
-            </div>
-        </div>
-    `;
-    
-    addCustomMessage(uploadHTML, false);
-    showToast('Image upload ready');
-    trackEvent('imageUploadOpened');
-}
-
-function handleImageUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    // Check file size
-    if (file.size > 10 * 1024 * 1024) {
-        showToast('Image too large. Please use an image under 10MB.');
-        return;
-    }
-    
-    // Display preview
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const previewHTML = `
-            <div class="image-upload-container">
-                <div class="upload-title">✅ Image Uploaded Successfully</div>
-                <div class="image-preview">
-                    <img src="${e.target.result}" alt="Uploaded image">
-                </div>
-                <div class="image-analysis">
-                    <strong>🔍 AI Analysis:</strong><br><br>
-                    ${analyzeImage(file.name)}
-                </div>
-            </div>
-        `;
-        
-        addCustomMessage(previewHTML, false);
-        showToast('Image analyzed!');
-        trackEvent('imageUploaded', { fileName: file.name, fileSize: file.size });
-    };
-    
-    reader.readAsDataURL(file);
-}
-
-function analyzeImage(fileName) {
-    // Simulated AI analysis (in production, this would use actual image recognition API)
-    const analyses = [
-        `Great news! Your roof appears to have excellent southern exposure with minimal shading. Based on the visible area, we estimate you could fit a <strong>7-8 kW system</strong> (approximately 20-23 panels). The roof looks to be in good condition with ample space. I recommend scheduling a professional site assessment for precise measurements and a detailed proposal.`,
-        
-        `Your property shows strong solar potential! I can see a clear roof section that would be ideal for solar panels. The angle and orientation look favorable for maximum sun exposure. Estimated system capacity: <strong>6-7 kW</strong>. There appear to be a few trees nearby - our team can assess shading patterns during a site visit to optimize panel placement.`,
-        
-        `Based on your image, your roof has good solar potential! The visible surface area could accommodate approximately <strong>5-6 kW</strong> of solar panels. I notice the roof may have some shading from nearby structures. Our solar experts can perform a detailed shading analysis and provide recommendations for optimal panel placement. Would you like to schedule a free consultation?`,
-        
-        `Excellent property for solar! Your roof appears to be south-facing with minimal obstructions - perfect for solar energy production. We estimate space for a <strong>8-10 kW system</strong>, which could significantly reduce your electricity costs. The roof condition looks suitable for installation. Let's schedule a detailed assessment to provide you with exact specifications and savings projections!`
-    ];
-    
-    return analyses[Math.floor(Math.random() * analyses.length)];
-}
-
-// ===== EMAIL TRANSCRIPT =====
-function emailTranscript() {
-    if (!state.currentChatId || !state.chatHistory[state.currentChatId]) {
-        showToast('No chat to email');
-        return;
-    }
-    
-    // Create modal
-    const modalHTML = `
-        <div class="modal-overlay" id="emailModal" onclick="closeEmailModal(event)">
-            <div class="modal-content" onclick="event.stopPropagation()">
-                <div class="modal-header">📧 Email Chat Transcript</div>
-                <div class="modal-subtitle">We'll send a copy of this conversation to your email</div>
-                <form class="modal-form" onsubmit="sendEmailTranscript(event)">
-                    <input type="email" id="emailInput" placeholder="your.email@example.com" required>
-                    <div class="modal-actions">
-                        <button type="button" class="modal-btn modal-btn-secondary" onclick="closeEmailModal()">Cancel</button>
-                        <button type="submit" class="modal-btn modal-btn-primary">Send Email</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    `;
-    
-    const modalDiv = document.createElement('div');
-    modalDiv.innerHTML = modalHTML;
-    document.body.appendChild(modalDiv);
-    
-    trackEvent('emailModalOpened');
-}
-
-function closeEmailModal(event) {
-    if (event && event.target.id !== 'emailModal') return;
-    
-    const modal = document.getElementById('emailModal');
-    if (modal && modal.parentElement) {
-        modal.parentElement.remove();
-    }
-}
-
-function sendEmailTranscript(event) {
-    event.preventDefault();
-    
-    const email = document.getElementById('emailInput').value;
-    const chat = state.chatHistory[state.currentChatId];
-    
-    // In production, this would make an API call to your backend to send the email
-    // For now, we'll simulate it
-    console.log('Sending email to:', email);
-    console.log('Chat messages:', chat.messages.length);
-    
-    closeEmailModal();
-    showToast(`Chat transcript sent to ${email}!`);
-    
-    // Show confirmation message
-    setTimeout(() => {
-        addMessage(`I've sent a copy of our conversation to ${email}. You should receive it within a few minutes. The email will include all our discussion and any calculations we've done together!`, false);
-    }, 500);
-    
-    trackEvent('emailTranscriptSent', { email, messageCount: chat.messages.length });
 }
 
 function showCalculator() {
     const calculatorHTML = `
         <div class="calculator-container">
-            <h3>☀️ St. Louis Solar Savings Calculator</h3>
+            <h3>St. Louis Solar Savings Calculator</h3>
             <p class="calc-subtitle">Customized for the Greater St. Louis, Missouri region</p>
             
             <div class="calc-input-group">
@@ -669,7 +674,7 @@ function showCalculator() {
                 </select>
             </div>
             
-            <button class="calc-button" onclick="calculateSavings()">Calculate My St. Louis Savings 🚀</button>
+            <button class="calc-button" onclick="calculateSavings()">Calculate My St. Louis Savings</button>
             <div class="calc-results" id="calcResults"></div>
         </div>
     `;
@@ -908,7 +913,7 @@ function addMessageToDOM(content, isUser) {
     
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
-    avatar.textContent = isUser ? '👤' : '☀️';
+    avatar.textContent = isUser ? 'U' : 'S';
     
     const messageContent = document.createElement('div');
     messageContent.className = 'message-content';
@@ -933,7 +938,7 @@ function addCustomMessage(htmlContent, isUser) {
     
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
-    avatar.textContent = isUser ? '👤' : '☀️';
+    avatar.textContent = isUser ? 'U' : 'S';
     
     const messageContent = document.createElement('div');
     messageContent.className = 'message-content';
@@ -959,7 +964,7 @@ function showTypingIndicator() {
     
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
-    avatar.textContent = '☀️';
+    avatar.textContent = 'S';
     
     const dotsDiv = document.createElement('div');
     dotsDiv.className = 'typing-dots';
@@ -982,19 +987,14 @@ function hideTypingIndicator() {
 function getResponse(userMessage) {
     const msg = userMessage.toLowerCase();
     
+    if (/roof.*analysis|analyze.*roof|satellite|aerial.*view|roof.*potential/i.test(msg)) {
+        setTimeout(() => showRoofAnalysis(), 500);
+        return "I can analyze your roof using AI and satellite imagery! This will give you insights about your roof size, orientation, shading, and solar potential. Just enter your address and I'll generate a detailed analysis for you.";
+    }
+    
     if (/weather|sun|sunny|cloud|forecast|production.*today/i.test(msg)) {
         setTimeout(() => showWeather(), 500);
         return "Let me show you today's weather and solar production potential for St. Louis! This will help you understand how much energy your panels would generate today.";
-    }
-    
-    if (/photo|picture|image|roof|upload.*image/i.test(msg)) {
-        setTimeout(() => showImageUpload(), 500);
-        return "Great idea! You can upload a photo of your roof or property, and I'll analyze it to estimate your solar potential. Our AI can identify roof space, shading issues, and recommend system sizes based on your image!";
-    }
-    
-    if (/email|send.*chat|transcript|copy.*conversation/i.test(msg)) {
-        setTimeout(() => emailTranscript(), 500);
-        return "I can email you a complete transcript of our conversation! This way you'll have all the information we discussed, including any calculations and recommendations, right in your inbox.";
     }
     
     if (/calculat|savings|estimate|how much.*save/i.test(msg)) {
