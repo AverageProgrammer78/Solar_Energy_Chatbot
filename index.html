@@ -12,7 +12,7 @@
     <div class="login-container" id="loginContainer">
         <div class="login-box">
             <div class="login-header">
-                <div class="login-logo">☀️</div>
+                <div class="login-logo">☀</div>
                 <h1>Welcome to SolarBot</h1>
                 <p>Sign in to access your solar energy assistant</p>
             </div>
@@ -39,7 +39,7 @@
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <button class="new-chat-btn" onclick="createNewChat()">
-                    <span>➕</span>
+                    <span>+</span>
                     <span>New chat</span>
                 </button>
             </div>
@@ -49,39 +49,9 @@
                     <!-- Chat history items will be inserted here -->
                 </div>
             </div>
-            <div class="sidebar-menu">
-                <button class="menu-item" onclick="showWeather()">
-                    <span>🌤️</span>
-                    <span>Solar Weather</span>
-                </button>
-                <button class="menu-item" onclick="showCalculator()">
-                    <span>🧮</span>
-                    <span>Calculator</span>
-                </button>
-                <button class="menu-item" onclick="openContactForm()">
-                    <span>📧</span>
-                    <span>Contact Us</span>
-                </button>
-                <button class="menu-item" onclick="showImageUpload()">
-                    <span>📷</span>
-                    <span>Upload Image</span>
-                </button>
-                <button class="menu-item" onclick="emailTranscript()">
-                    <span>✉️</span>
-                    <span>Email Chat</span>
-                </button>
-                <button class="menu-item" onclick="exportChat()">
-                    <span>💾</span>
-                    <span>Export Chat</span>
-                </button>
-                <button class="menu-item" onclick="handleLogout()">
-                    <span>🚪</span>
-                    <span>Logout</span>
-                </button>
-            </div>
             <div class="sidebar-footer">
                 <div class="user-info">
-                    <span>👤</span>
+                    <span class="user-icon">👤</span>
                     <span id="currentUser">User</span>
                 </div>
             </div>
@@ -96,19 +66,50 @@
                     <span class="header-title">SolarBot</span>
                 </div>
                 <div class="header-right">
-                    <button class="icon-btn" onclick="deleteCurrentChat()" title="Delete current chat">🗑️</button>
+                    <button class="icon-btn" onclick="toggleMenuDropdown()" title="Menu">⋮</button>
                     <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</button>
                 </div>
             </div>
 
+            <!-- Dropdown Menu -->
+            <div class="menu-dropdown" id="menuDropdown">
+                <button class="dropdown-item" onclick="showWeather(); closeMenuDropdown()">
+                    Solar Weather
+                </button>
+                <button class="dropdown-item" onclick="showCalculator(); closeMenuDropdown()">
+                    Calculator
+                </button>
+                <button class="dropdown-item" onclick="openContactForm(); closeMenuDropdown()">
+                    Contact Us
+                </button>
+                <button class="dropdown-item" onclick="exportChat(); closeMenuDropdown()">
+                    Export Chat
+                </button>
+                <button class="dropdown-item" onclick="deleteCurrentChat(); closeMenuDropdown()">
+                    Delete Chat
+                </button>
+                <button class="dropdown-item" onclick="handleLogout(); closeMenuDropdown()">
+                    Logout
+                </button>
+            </div>
+
             <!-- Chat Area -->
             <div class="chat-wrapper" id="chatWrapper">
+                <!-- Motivational Banner -->
+                <div class="motivational-banner" id="motivationalBanner">
+                    <div class="banner-icon">💡</div>
+                    <div class="banner-content">
+                        <div class="banner-text" id="bannerText">Loading...</div>
+                    </div>
+                    <button class="banner-close" onclick="closeBanner()">×</button>
+                </div>
+                
                 <div class="chat-container" id="chatContainer">
                     <div class="message bot">
                         <div class="message-wrapper">
-                            <div class="avatar">☀️</div>
+                            <div class="avatar">S</div>
                             <div class="message-content">
-                                Hello! I'm SolarBot, your AI-powered solar energy assistant! 🌟 I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. How can I help you today?
+                                Hello! I'm SolarBot, your AI-powered solar energy assistant. I can help you understand solar panels, calculate potential savings, schedule appointments, and answer all your renewable energy questions. How can I help you today?
                             </div>
                         </div>
                     </div>
@@ -118,10 +119,10 @@
 
             <!-- Suggestions -->
             <div class="suggestions" id="suggestionsContainer">
-                <button class="suggestion-btn" onclick="sendSuggestion('Why should I get solar panels?')">💡 Why solar?</button>
-                <button class="suggestion-btn" onclick="sendSuggestion('How much do solar panels cost?')">💰 Costs</button>
-                <button class="suggestion-btn" onclick="sendSuggestion('Schedule a consultation')">📅 Book appointment</button>
-                <button class="suggestion-btn" onclick="showCalculator()">🧮 Calculate savings</button>
+                <button class="suggestion-btn" onclick="sendSuggestion('Why should I get solar panels?')">Why solar?</button>
+                <button class="suggestion-btn" onclick="sendSuggestion('How much do solar panels cost?')">Costs</button>
+                <button class="suggestion-btn" onclick="sendSuggestion('Schedule a consultation')">Book appointment</button>
+                <button class="suggestion-btn" onclick="showCalculator()">Calculate savings</button>
             </div>
 
             <!-- Input Area -->
