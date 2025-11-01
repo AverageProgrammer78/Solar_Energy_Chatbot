@@ -8,8 +8,33 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Main App -->
-    <div class="app-container" id="appContainer">
+    <!-- Login Screen -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="login-logo">☀</div>
+                <h1>Welcome to SolarBot</h1>
+                <p>Sign in to access your solar energy assistant</p>
+            </div>
+            <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="login-btn">Sign In</button>
+                <div class="login-footer">
+                    <p>Demo credentials: <strong>demo</strong> / <strong>demo123</strong></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App (Hidden until login) -->
+    <div class="app-container" id="appContainer" style="display: none;">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -63,19 +88,13 @@
                 <button class="dropdown-item" onclick="deleteCurrentChat(); closeMenuDropdown()">
                     Delete Chat
                 </button>
+                <button class="dropdown-item" onclick="handleLogout(); closeMenuDropdown()">
+                    Logout
+                </button>
             </div>
 
             <!-- Chat Area -->
             <div class="chat-wrapper" id="chatWrapper">
-                <!-- Motivational Banner -->
-                <div class="motivational-banner" id="motivationalBanner">
-                    <div class="banner-icon">💡</div>
-                    <div class="banner-content">
-                        <div class="banner-text" id="bannerText">Loading...</div>
-                    </div>
-                    <button class="banner-close" onclick="closeBanner()">×</button>
-                </div>
-                
                 <div class="chat-container" id="chatContainer">
                     <div class="message bot">
                         <div class="message-wrapper">
